@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib import messages
+from django.utils import timezone
 from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm
 from shared.inventory.inventory_import import inventory_importer
