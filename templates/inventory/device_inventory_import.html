@@ -1,5 +1,13 @@
 {% extends "base_template/base.html"%}
 {% block content %}
+{% if form.errors %}
+<div class="alert alert-danger alert-dismissible" role="alert" style="text-align: center;">
+  {{ form.errors.file }}
+<button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"
+    aria-label="Close">
+</button>
+</div>
+{% endif %}
 <div class="alert alert-info pb-0" role="alert">
   <p class="lead text-dark">
     Please use the following header fields in the CSV file:
@@ -18,9 +26,4 @@
     Upload
   </button>
 </form>
-{% if form.errors %}
-<div class="alert alert-danger mt-3" role="alert">
-  {{ form.errors.file }}
-</div>
-{% endif %}
 {% endblock %}

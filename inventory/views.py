@@ -36,12 +36,15 @@ def device_inventory_import(request):
         return render(request, 'inventory/device_inventory_import.html', context)
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            result = inventory_importer(request.FILES['file'])
-            if result['status'] == 'success':
-                messages.success(request, 'Import was successful')
-            else:
-                messages.error(request, result)
+        if request.FILES:
+            if form.is_valid():
+                result = inventory_importer(request.FILES['file'])
+                if result['status'] == 'success':
+                    messages.success(request, 'Import was successful')
+                else:
+                    messages.error(request, result)
+        else:
+            messages.error(request, 'No file was provided...')
         context = {
             'title': 'Inventory - Import Devices',
             'card_header': 'Inventory - Import Devices',

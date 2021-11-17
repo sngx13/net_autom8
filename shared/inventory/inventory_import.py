@@ -19,8 +19,8 @@ def inventory_importer(file):
                     hostname=df.iloc[i][0],
                     mgmt_ip=df.iloc[i][1],
                     software_version=df.iloc[i][2],
-                    serial_number=df.iloc[i][3],
-                    hardware_model=df.iloc[i][4],
+                    hardware_model=df.iloc[i][3],
+                    serial_number=df.iloc[i][4],
                     location=df.iloc[i][5],
                     date_added=timezone.now()
                 )

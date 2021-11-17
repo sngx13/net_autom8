@@ -1,4 +1,21 @@
 {% extends "base_template/base.html"%}
 {% block content %}
-{{ data.hostname }}
+<div class="col-md-3">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-server"></i>
+            {{ data.hostname }}
+            <i class="fas fa-terminal text-success"></i>
+            {{ data.mgmt_ip }}
+        </div>
+        <div class="card-body">
+            {{ data.software_version }}
+            {{ data.hardware_model }}
+        </div>
+        <div class="card-footer">
+            <i class="fas fa-map-marked-alt"></i>
+                Location: {{ data.location }}
+        </div>
+    </div>
+</div>
 {% endblock %}
