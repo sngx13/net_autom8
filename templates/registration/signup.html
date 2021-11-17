@@ -1,0 +1,39 @@
+{% extends "base_template/base.html"%}
+{% block content %}
+<form method="POST">
+{% csrf_token %}
+<div class="d-flex justify-content-center">
+  <div class="col-md-6">
+  <h4>
+    <i class="fas fa-user-plus"></i>
+  Sign Up
+</h4>
+  <hr style="width: 50%">
+    {% for field in form %}
+    <div class="input-group mb-3">
+      <span class="input-group-text">
+        {{ field.label_tag }}
+      </span>
+      {{ field }}
+    </div>
+    {% for error in field.errors %}
+    <div class="alert alert-danger alert-dismissible" role="alert">
+      {{ error }}
+      <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"
+                aria-label="Close">
+            </button>
+    </div>
+    {% endfor %}
+  {% endfor %}
+  <button type="submit" class="btn btn-sm btn-primary">
+      <i class="fas fa-sign-in-alt"></i>
+      Sign Up
+    </button>
+    <p class="mt-3">
+      Here by mistake? Click <a href="{% url 'login' %}">here</a> to login.
+    </p>
+  </div>
+</div>
+</div>
+</form>
+{% endblock %}

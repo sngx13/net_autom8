@@ -1,0 +1,25 @@
+{% extends "base_template/base.html"%}
+{% load static %}
+{% block content %}
+{% if data %}
+<div class="row">
+    <div class="col-md-6">
+        <div id="DashboardDevicesInventory" style="width: auto; height: 480px;"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="DashboardDevicesCount" style="width: auto; height: 480px;"></div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script src="{% static 'js/dashboard/dashboard.js' %}"></script>
+<script>
+    google.charts.load('current', { 'packages': ['corechart'] });
+    var deviceInventoryChartData = {{ data.inventory_chart | safe }};
+    var deviceCountChartData = {{ data.device_list_chart | safe }};
+    google.charts.setOnLoadCallback(function () { drawDeviceInventoryChart(deviceInventoryChartData) });
+    google.charts.setOnLoadCallback(function () { drawDeviceCountChart(deviceCountChartData) });
+</script>
+{% endblock scripts %}

@@ -1,0 +1,26 @@
+{% extends "base_template/base.html"%}
+{% block content %}
+<div class="alert alert-info pb-0" role="alert">
+  <p class="lead text-dark">
+    Please use the following header fields in the CSV file:
+  </p>
+  <p class="text-muted">
+    "Hostname","IP","Software","Model","Serial Number","Location","Date Added"
+  </p>
+</div>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="col-md-2 mt-3 mb-3">
+    {{ form.file }}
+  </div>
+  <button type="submit" class="btn btn-sm btn-primary">
+    <i class="fas fa-file-upload"></i>
+    Upload
+  </button>
+</form>
+{% if form.errors %}
+<div class="alert alert-danger mt-3" role="alert">
+  {{ form.errors.file }}
+</div>
+{% endif %}
+{% endblock %}

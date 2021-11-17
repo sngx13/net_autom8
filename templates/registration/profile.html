@@ -1,0 +1,53 @@
+{% extends "base_template/base.html"%}
+{% block content %}
+<div class="col-md-4">
+    <h4 class="card-title">
+        Welcome, {{ user.first_name }} {{ user.last_name }}
+    </h4>
+    <div class="row">
+        <img src="https://avatars.dicebear.com/api/bottts/{{ user.login }}.svg" style="width: 200px;">
+    </div>
+    <div class="row mb-2">
+        <div class="col">
+            <label>
+                <strong>Email:</strong>
+            </label>
+            {{ user.email|lower }}
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-auto">
+            <label>
+                <strong>Joined on:</strong>
+            </label>
+            {{ user.date_joined }}
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-auto">
+            <label>
+                <strong>Last Login:</strong>
+            </label>
+            {{ user.last_login }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-auto">
+            <label>
+                <strong>Privilege Level:</strong>
+            </label>
+            {% if user.is_staff %}
+            <span class="badge rounded-pill bg-success">
+                <i class="fas fa-jedi"></i>
+                Super User
+            </span>
+            {% else %}
+            <span class="badge rounded-pill bg-success">
+                <i class="fas fa-fist-raised"></i>
+                Basic User
+            </span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
