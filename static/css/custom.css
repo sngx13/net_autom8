@@ -14,14 +14,19 @@ body {
   padding-top: 5rem;
   height: 100%;
 }
+.card {
+    position: relative;
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+}
 .card-header {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     font-size: 16px;
 }
-.card {
-    position: relative;
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+.card-footer {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
 }
 th {
     font-family: 'Roboto', sans-serif;

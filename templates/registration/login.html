@@ -1,44 +1,24 @@
 {% extends "base_template/base.html"%}
+{% load crispy_forms_tags %}
 {% block content %}
-{% if form.errors %}
-<div class="alert alert-danger alert-dismissible" role="alert">
-  Your username and password didn't match. Please try again.
-  <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"
-                aria-label="Close">
-            </button>
-</div>
-{% endif %}
 <form method="POST" action="{% url 'login' %}">
 {% csrf_token %}
 <div class="d-flex justify-content-center">
-  <div class="col-md-4">
-  <h4>
-    <i class="fas fa-door-open"></i>
-  Please Login
-</h4>
-  <hr style="width: 50%">
-  <div class="input-group mb-3">
-    <span class="input-group-text">
-      <i class="fas fa-user"></i>
-      &nbsp;Username
-    </span>
-    {{ form.username }}
+  <div class="col-md-2">
+    <h4>
+      <i class="fas fa-door-open"></i>
+    Please Login
+  </h4>
+    <hr style="width: 100%">
+    {{ form|crispy }}
+      <button type="submit" class="btn btn-sm btn-primary">
+        <i class="fas fa-sign-in-alt"></i>
+        Login
+      </button>
+      <p class="mt-3">
+        To sign up please follow this <a href="{% url 'signup' %}">link</a>
+      </p>
   </div>
-  <div class="input-group mb-3">
-    <span class="input-group-text">
-      <i class="fas fa-lock"></i>
-      &nbsp;Password
-    </span>
-    {{ form.password }}
-  </div>
-    <button type="submit" class="btn btn-sm btn-primary">
-      <i class="fas fa-sign-in-alt"></i>
-      Login
-    </button>
-    <p class="mt-3">
-      To sign up please follow this <a href="{% url 'signup' %}">link</a>
-    </p>
-</div>
 </div>
 </form>
 {% endblock %}
