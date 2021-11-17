@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.contrib import messages
 from .models import Device
-from .forms import UploadFileForm
+from .forms import UploadFileForm, DeviceCreateForm
 from shared.inventory.inventory_import import inventory_importer
 
 
@@ -13,6 +13,40 @@ def device_detailed_info(request, device_id):
         'data': device_info
     }
     return render(request, 'inventory/device_detailed_info.html', context)
+
+
+def device_create(request):
+    if request.method == 'GET':
+        form = DeviceCreateForm(request.POST)
+        context = {
+            'title': 'Inventory - Create Device',
+            'card_header': 'Inventory - Create Device',
+            'form': form
+        }
+        return render(request, 'inventory/device_create.html', context)
+    elif request.method == 'POST':
+        form = DeviceCreateForm(request.POST)
+        if form.is_valid():
+            add_device = Device(
+                hostname=request.POST['hostname'],
+                mgmt_ip=request.POST['mgmt_ip'],
+                software_version=request.POST['software_version'],
+                vendor=request.POST['vendor'],
+                hardware_model=request.POST['hardware_model'],
+                serial_number=request.POST['serial_number'],
+                location=request.POST['location'],
+                date_added=timezone.now()
+            )
+            add_device.save()
+            messages.success(request, 'Device was added successfully')
+        else:
+            messages.error(request, 'Invalid information provided')
+        context = {
+            'title': 'Inventory - Create Device',
+            'card_header': 'Inventory - Create Device',
+            'form': form
+        }
+        return render(request, 'inventory/device_create.html', context)
 
 
 def device_inventory(request):

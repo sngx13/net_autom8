@@ -8,6 +8,7 @@
                 <th><i class="fas fa-signature"></i> Hostname</th>
                 <th><i class="fas fa-at"></i> IP</th>
                 <th><i class="fas fa-code-branch"></i> Software</th>
+                <th><i class="fas fa-briefcase"></i> Vendor</th>
                 <th><i class="fas fa-sitemap"></i> Model</th>
                 <th><i class="fas fa-barcode"></i> Serial Number</th>
                 <th><i class="fas fa-search-location"></i> Location</th>
@@ -18,10 +19,13 @@
             {% for device in data %}
             <tr>
                 <td>
-                    <a class="btn btn-sm btn-primary" href="{% url 'inventory:device_detailed_info' device.id %}">{{ device.hostname }}</a>
+                    <a class="btn btn-sm btn-primary" href="{% url 'inventory:device_detailed_info' device.id %}">
+                    {{ device.hostname }}
+                </a>
                 </td>
                 <td>{{ device.mgmt_ip }}</td>
                 <td>{{ device.software_version }}</td>
+                <td>{{ device.vendor }}</td>
                 <td>{{ device.hardware_model }}</td>
                 <td>{{ device.serial_number }}</td>
                 <td>{{ device.location }}</td>
@@ -33,7 +37,10 @@
 </div>
 {% endif %}
 <p>
-    To import devices using a CSV file click <a href="{% url 'inventory:device_inventory_import' %}">here</a>
+    Additionally, you may wish to create a single device manually <a href="{% url 'inventory:device_create' %}">here</a>
+</p>
+<p>
+    To bulk import devices using a CSV file click <a href="{% url 'inventory:device_inventory_import' %}">here</a>
 </p>
 {% endblock %}
 {% block scripts %}

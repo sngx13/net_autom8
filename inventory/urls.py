@@ -19,5 +19,10 @@ urlpatterns = [
         'device_inventory_import/',
         login_required(views.device_inventory_import),
         name='device_inventory_import'
+    ),
+    path(
+        'device_create/',
+        login_required(views.device_create),
+        name='device_create'
     )
 ]

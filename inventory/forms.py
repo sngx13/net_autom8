@@ -8,3 +8,13 @@ class UploadFileForm(forms.Form):
         required=False,
         validators=[FileExtensionValidator(allowed_extensions=['csv'])]
     )
+
+
+class DeviceCreateForm(forms.Form):
+    hostname = forms.CharField()
+    mgmt_ip = forms.CharField()
+    software_version = forms.CharField()
+    serial_number = forms.CharField()
+    vendor = forms.CharField()
+    hardware_model = forms.CharField()
+    location = forms.CharField()
