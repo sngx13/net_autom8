@@ -17,7 +17,9 @@
         <tbody>
             {% for device in data %}
             <tr>
-                <td>{{ device.hostname }}</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" href="{% url 'inventory:device_detailed_info' device.id %}">{{ device.hostname }}</a>
+                </td>
                 <td>{{ device.mgmt_ip }}</td>
                 <td>{{ device.software_version }}</td>
                 <td>{{ device.hardware_model }}</td>

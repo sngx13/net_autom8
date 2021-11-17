@@ -5,6 +5,16 @@ from .forms import UploadFileForm
 from shared.inventory.inventory_import import inventory_importer
 
 
+def device_detailed_info(request, device_id):
+    device_info = Device.objects.get(pk=device_id)
+    context = {
+        'title': 'Device Detailed Information',
+        'card_header': 'Device Detailed Information',
+        'data': device_info
+    }
+    return render(request, 'inventory/device_detailed_info.html', context)
+
+
 def device_inventory(request):
     list_of_devices = Device.objects.all()
     context = {

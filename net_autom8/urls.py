@@ -10,5 +10,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('', login_required(TemplateView.as_view(template_name='registration/profile.html')), name='profile')
+    path(
+        '',
+        login_required(
+            TemplateView.as_view(template_name='registration/profile.html')
+        ),
+        name='profile'
+    )
 ]
