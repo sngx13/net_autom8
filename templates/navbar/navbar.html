@@ -3,9 +3,10 @@
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
       <i class="fas fa-robot" style="font-size: 24px;"></i>
-      AUTOM8
+      {AUTOM8}
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+      aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -14,22 +15,36 @@
           <a class="nav-link text-dark" href="{% url 'dashboard:dashboard' %}">
             <i class="fas fa-tachometer-alt"></i>
             Dashboard
-        </a>
+          </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link text-dark" href="{% url 'inventory:device_inventory' %}">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle text-dark" href="#" id="InventoryDropdown" role="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fas fa-boxes"></i>
             Inventory
           </a>
+          <ul class="dropdown-menu" aria-labelledby="InventoryDropdown">
+            <li><a class="dropdown-item" href="{% url 'inventory:device_inventory' %}">
+                <i class="fas fa-list-ul"></i>
+                Device List</a>
+            </li>
+            <li><a class="dropdown-item" href="{% url 'inventory:device_create' %}">
+              <i class="fas fa-plus-circle"></i>
+              Add Device</a></li>
+            <li><a class="dropdown-item" href="{% url 'inventory:device_inventory_import' %}">
+              <i class="fas fa-file-import"></i>
+              Import Devices</a>
+            </li>
+          </ul>
         </li>
       </ul>
       <div class="dropdown">
-        <a class="btn btn-sm btn-success dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="fas fa-user-circle"></i>
-            {{ user.username }}
+        <a class="btn btn-sm btn-success dropdown-toggle" href="#" role="button" id="UserProfileDropdown"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-user-circle"></i>
+          {{ user.username }}
         </a>
-        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+        <ul class="dropdown-menu" aria-labelledby="UserProfileDropdown">
           <li>
             <a class="dropdown-item" href="{% url 'profile' %}">
               <i class="fas fa-id-card-alt"></i> Profile
@@ -41,7 +56,7 @@
             </a>
           </li>
         </ul>
-    </div>
+      </div>
     </div>
   </div>
 </nav>
