@@ -24,5 +24,10 @@ urlpatterns = [
         'device_create/',
         login_required(views.device_create),
         name='device_create'
-    )
+    ),
+    path(
+        'device_delete/<device_id>/',
+        login_required(views.device_delete),
+        name='device_delete'
+    ),
 ]

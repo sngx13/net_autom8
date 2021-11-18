@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.contrib import messages
+from django.http.response import HttpResponseRedirect
 from django.utils import timezone
 from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm
@@ -14,6 +15,15 @@ def device_detailed_info(request, device_id):
         'data': device_info
     }
     return render(request, 'inventory/device_detailed_info.html', context)
+
+
+def device_delete(request, device_id):
+    device_name = Device.objects.get(pk=device_id)
+    device_to_delete = Device.objects.filter(pk=device_id).delete()
+    messages.success(
+        request, f'Device: {device_name.hostname} was deleted successfully!'
+    )
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def device_create(request):
@@ -39,9 +49,9 @@ def device_create(request):
                 date_added=timezone.now()
             )
             add_device.save()
-            messages.success(request, 'Device was added successfully')
+            messages.success(request, 'Device was added successfully!')
         else:
-            messages.error(request, 'Invalid information provided')
+            messages.error(request, 'Invalid information provided!')
         context = {
             'title': 'Inventory - Create Device',
             'card_header': 'Inventory - Create Device',
@@ -75,11 +85,11 @@ def device_inventory_import(request):
             if form.is_valid():
                 result = inventory_importer(request.FILES['file'])
                 if result['status'] == 'success':
-                    messages.success(request, 'Import was successful')
+                    messages.success(request, 'Import was successful!')
                 else:
                     messages.error(request, result)
         else:
-            messages.error(request, 'No file was provided...')
+            messages.error(request, 'No file was provided!')
         context = {
             'title': 'Inventory - Import Devices',
             'card_header': 'Inventory - Import Devices',

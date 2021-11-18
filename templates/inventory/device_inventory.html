@@ -13,6 +13,7 @@
                 <th><i class="fas fa-barcode"></i> Serial Number</th>
                 <th><i class="fas fa-search-location"></i> Location</th>
                 <th><i class="fas fa-calendar-day"></i> Date Added</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -30,6 +31,11 @@
                 <td>{{ device.serial_number }}</td>
                 <td>{{ device.location }}</td>
                 <td>{{ device.date_added }}</td>
+                <td>
+                    <a href="{% url 'inventory:device_delete' device.id %}">
+                        <i class="fas fa-trash-alt text-danger"></i>
+                    </a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
