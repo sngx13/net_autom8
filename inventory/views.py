@@ -18,10 +18,10 @@ def device_detailed_info(request, device_id):
 
 
 def device_delete(request, device_id):
-    device_name = Device.objects.get(pk=device_id)
-    device_to_delete = Device.objects.filter(pk=device_id).delete()
+    device_to_delete = Device.objects.get(pk=device_id)
+    device_to_delete.delete()
     messages.success(
-        request, f'Device: {device_name.hostname} was deleted successfully!'
+        request, f'Device: {device_to_delete.hostname} was deleted successfully!'
     )
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -38,18 +38,21 @@ def device_create(request):
     elif request.method == 'POST':
         form = DeviceCreateForm(request.POST)
         if form.is_valid():
-            add_device = Device(
-                hostname=request.POST['hostname'],
-                mgmt_ip=request.POST['mgmt_ip'],
-                software_version=request.POST['software_version'],
-                vendor=request.POST['vendor'],
-                hardware_model=request.POST['hardware_model'],
-                serial_number=request.POST['serial_number'],
-                location=request.POST['location'],
-                date_added=timezone.now()
-            )
-            add_device.save()
-            messages.success(request, 'Device was added successfully!')
+            try:
+                add_device = Device(
+                    hostname=request.POST['hostname'],
+                    mgmt_ip=request.POST['mgmt_ip'],
+                    software_version=request.POST['software_version'],
+                    vendor=request.POST['vendor'],
+                    hardware_model=request.POST['hardware_model'],
+                    serial_number=request.POST['serial_number'],
+                    location=request.POST['location'],
+                    date_added=timezone.now()
+                )
+                add_device.save()
+                messages.success(request, 'Device was added successfully!')
+            except Exception as error:
+                messages.error(request, str(error))
         else:
             messages.error(request, 'Invalid information provided!')
         context = {
@@ -57,7 +60,7 @@ def device_create(request):
             'card_header': 'Inventory - Create Device',
             'form': form
         }
-        return render(request, 'inventory/device_create.html', context)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def device_inventory(request):
@@ -95,4 +98,4 @@ def device_inventory_import(request):
             'card_header': 'Inventory - Import Devices',
             'form': form
         }
-        return render(request, 'inventory/device_inventory_import.html', context)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
