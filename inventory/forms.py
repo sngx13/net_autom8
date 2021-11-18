@@ -14,6 +14,14 @@ class UploadFileForm(forms.Form):
     )
 
 
+VENDORS = (
+    ('', '--- Select ---'),
+    ('Cisco', 'Cisco'),
+    ('Juniper', 'Juniper'),
+    ('Nokia', 'Nokia'),
+)
+
+
 class DeviceCreateForm(forms.Form):
     hostname = forms.CharField(
         label= mark_safe('<i class="fas fa-signature"></i> Hostname'),
@@ -31,9 +39,10 @@ class DeviceCreateForm(forms.Form):
         label= mark_safe('<i class="fas fa-barcode"></i> Serial'),
         widget=forms.TextInput(attrs={'class': 'form-control form-control-sm'})
     )
-    vendor = forms.CharField(
+    vendor = forms.ChoiceField(
         label= mark_safe('<i class="fas fa-briefcase"></i> Vendor'),
-        widget=forms.TextInput(attrs={'class': 'form-control form-control-sm'})
+        widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
+        choices=VENDORS
     )
     hardware_model = forms.CharField(
         label= mark_safe('<i class="fas fa-sitemap"></i> Model'),
