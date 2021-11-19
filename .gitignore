@@ -18,3 +18,4 @@
 *.ini
 *.yaml
 __pycache__/
+migrations/
