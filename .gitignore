@@ -16,3 +16,4 @@
 *.gz
 *.ini
 *.yaml
+__pycache__/**
