@@ -4,7 +4,6 @@ function drawDeviceInventoryChart(ChartData) {
     var data = new google.visualization.DataTable(ChartData);
     var options = {
         title: 'Devices',
-        colors: ['red', 'green', 'blue', 'orange', 'brown'],
         pieHole: 0.4,
         pieSliceTextStyle: {
             color: 'white',
@@ -39,7 +38,7 @@ function drawDeviceCountChart(ChartData) {
     var data = new google.visualization.DataTable(ChartData);
     var options = {
         title: 'Device Count',
-        colors: ['red'],
+        //colors: ['red'],
         legend: 'none',
         pieSliceText: 'value',
         pieSliceTextStyle: {

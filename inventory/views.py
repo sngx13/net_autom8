@@ -4,7 +4,8 @@ from django.http.response import HttpResponseRedirect
 from django.utils import timezone
 from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm
-from shared.inventory.inventory_import import inventory_importer
+from .scripts.inventory_import import inventory_importer
+from .scripts.inventory_device_connector import device_connect
 
 
 def device_detailed_info(request, device_id):
@@ -12,7 +13,8 @@ def device_detailed_info(request, device_id):
     context = {
         'title': 'Device Detailed Information',
         'card_header': 'Device Detailed Information',
-        'data': device_info
+        'data': device_info,
+        'details': device_connect(device_info.mgmt_ip)
     }
     return render(request, 'inventory/device_detailed_info.html', context)
 

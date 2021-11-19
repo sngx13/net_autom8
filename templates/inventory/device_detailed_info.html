@@ -17,5 +17,14 @@
                 Location: {{ data.location }}
         </div>
     </div>
+    {% for interface in details %}
+        {{ interface.interface }} -
+        {{ interface.link_status }} -
+        {{ interface.bia }} -
+        {{ interface.description }} -
+        {{ interface.speed }} -
+        {{ interface.duplex }} -
+        {{ interface.crc }}
+    {% endfor %}
 </div>
 {% endblock %}
