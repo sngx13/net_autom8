@@ -9,12 +9,12 @@ from .scripts.inventory_device_connector import device_connect
 
 
 def device_detailed_info(request, device_id):
-    device_info = Device.objects.get(pk=device_id)
+    device = Device.objects.get(pk=device_id)
     context = {
         'title': 'Device Detailed Information',
         'card_header': 'Device Detailed Information',
-        'data': device_info,
-        'details': device_connect(device_info.mgmt_ip)
+        'data': device,
+        'details': device_connect(device.mgmt_ip, device.software_version)
     }
     return render(request, 'inventory/device_detailed_info.html', context)
 

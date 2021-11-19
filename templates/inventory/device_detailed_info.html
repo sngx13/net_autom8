@@ -1,30 +1,86 @@
 {% extends "base_template/base.html"%}
 {% block content %}
-<div class="col-md-3">
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-server"></i>
-            {{ data.hostname }}
-            <i class="fas fa-terminal text-success"></i>
-            {{ data.mgmt_ip }}
-        </div>
-        <div class="card-body">
-            {{ data.software_version }}
-            {{ data.hardware_model }}
-        </div>
-        <div class="card-footer">
-            <i class="fas fa-map-marked-alt"></i>
+{% if data and details %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-server"></i>
+                {{ data.hostname }}
+                <i class="fas fa-terminal text-success"></i>
+                {{ data.mgmt_ip }}
+            </div>
+            <div class="card-body">
+                <ul class="list-group">
+                    {% for info in details.version %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Software Version:
+                        <span class="badge bg-primary rounded-pill">{{ info.rommon }} - {{ info.version }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Platform:
+                        <span class="badge bg-primary rounded-pill">{{ info.hardware.0 }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Uptime:
+                        <span class="badge bg-primary rounded-pill">{{ info.uptime }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Reload Reason:
+                        <span class="badge bg-primary rounded-pill">{{ info.reload_reason }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-map-marked-alt"></i>
                 Location: {{ data.location }}
+            </div>
         </div>
     </div>
-    {% for interface in details %}
-        {{ interface.interface }} -
-        {{ interface.link_status }} -
-        {{ interface.bia }} -
-        {{ interface.description }} -
-        {{ interface.speed }} -
-        {{ interface.duplex }} -
-        {{ interface.crc }}
-    {% endfor %}
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive rounded">
+                    <table id="InterfaceList" class="table table-striped table-hover table-sm" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-ethernet"></i> Interface</th>
+                                <th><i class="fas fa-sign"></i> Description</th>
+                                <th><i class="fas fa-at"></i> IP</th>
+                                <th><i class="fas fa-check-circle"></i> Status</th>
+                                <th><i class="fas fa-random"></i> BIA</th>
+                                <th><i class="fas fa-tachometer-alt"></i> Speed & Duplex</th>
+                                <th><i class="fas fa-exclamation-circle"></i> CRC</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for interface in details.interfaces %}
+                            <tr>
+                                <td>{{ interface.interface }}</td>
+                                {% if interface.description %}
+                                <td>{{ interface.description }}</td>
+                                {% else %}
+                                <td>N/A</td>
+                                {% endif %}
+                                {% if interface.ip_address %}
+                                <td>{{ interface.ip_address }}</td>
+                                {% else %}
+                                <td>N/A</td>
+                                {% endif %}
+                                <td>{{ interface.link_status }} {{ interface.protocol_status }}</td>
+                                <td>{{ interface.bia }} </td>
+                                <td>{{ interface.speed }} - {{ interface.duplex }}</td>
+                                <td>{{ interface.crc }}</td>
+                                {% endfor %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+{% endif %}
 {% endblock %}
