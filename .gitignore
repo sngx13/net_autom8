@@ -1,7 +1,8 @@
 *.xml
 *.json
 *.cfg
-*.pyc
+*.py[cod]
+*$py.class
 *.cpython
 *.log
 *.txt
@@ -16,4 +17,4 @@
 *.gz
 *.ini
 *.yaml
-__pycache__/**
+__pycache__/
