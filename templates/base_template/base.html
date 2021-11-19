@@ -46,6 +46,11 @@
                       {% block content %}
                       {% endblock %}
                       <!-- End of Content -->
+                      <div id="overlay" onclick="spinner_toggle_off();">
+                        <div class="w-100 d-flex justify-content-center align-items-center">
+                            <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status"></div>
+                        </div>
+                      </div>
                   </div>
                 </div>
             </div>
@@ -63,6 +68,16 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/v/bs5/jszip-2.5.0/dt-1.11.2/af-2.3.7/b-2.0.0/b-colvis-2.0.0/b-html5-2.0.0/date-1.1.1/fc-3.3.3/fh-3.1.9/r-2.2.9/sc-2.0.5/sl-1.3.3/datatables.min.js"></script>
     <!-- End of Data Tables -->
+    <!-- Spinner-->
+    <script>
+      function spinner_toggle_on() {
+            document.getElementById("overlay").style.display = "flex";
+        };
+        function spinner_toggle_off() {
+            document.getElementById("overlay").style.display = "none";
+        };
+    </script>
+    <!-- End of Spinner -->
     <!-- Page Loaded JS -->
     {% block scripts %}
     {% endblock %}

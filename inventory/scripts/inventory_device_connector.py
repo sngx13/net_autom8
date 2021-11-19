@@ -21,7 +21,11 @@ def device_connect(mgmt_ip, software_version):
     with Scrapli(** device) as conn:
         interfaces = conn.send_command('show interfaces')
         version = conn.send_command('show version')
+        routing = conn.send_command('show ip route')
+        bgp_table = conn.send_command('show ip bgp')
     return {
         'interfaces': interfaces.textfsm_parse_output(),
-        'version': version.textfsm_parse_output()
+        'version': version.textfsm_parse_output(),
+        'routing': routing.textfsm_parse_output(),
+        'bgp_table': bgp_table.textfsm_parse_output()
     }

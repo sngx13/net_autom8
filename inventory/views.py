@@ -12,9 +12,8 @@ def device_detailed_info(request, device_id):
     device = Device.objects.get(pk=device_id)
     context = {
         'title': 'Device Detailed Information',
-        'card_header': 'Device Detailed Information',
-        'data': device,
-        'details': device_connect(device.mgmt_ip, device.software_version)
+        'card_header': f'Device Detailed Information - {device.hostname} {device.mgmt_ip}',
+        'data': device_connect(device.mgmt_ip, device.software_version)
     }
     return render(request, 'inventory/device_detailed_info.html', context)
 

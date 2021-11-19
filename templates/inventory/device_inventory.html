@@ -20,7 +20,7 @@
             {% for device in data %}
             <tr>
                 <td>
-                    <a class="btn btn-sm btn-primary" href="{% url 'inventory:device_detailed_info' device.id %}">
+                    <a class="btn btn-sm btn-primary" href="{% url 'inventory:device_detailed_info' device.id %}" onclick="spinner_toggle_on();">
                     {{ device.hostname }}
                 </a>
                 </td>
