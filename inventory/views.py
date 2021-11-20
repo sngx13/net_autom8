@@ -5,7 +5,7 @@ from django.utils import timezone
 from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm
 from .scripts.inventory_import import inventory_importer
-from .scripts.inventory_device_connector import device_connect
+from .scripts.inventory_device_connector import device_get_details, device_run_discovery
 
 
 def device_detailed_info(request, device_id):
@@ -13,7 +13,7 @@ def device_detailed_info(request, device_id):
     context = {
         'title': 'Device Detailed Information',
         'card_header': f'Device Detailed Information - {device.hostname} {device.mgmt_ip}',
-        'data': device_connect(device.mgmt_ip, device.software_version)
+        'data': device_get_details(device.mgmt_ip, device.vendor)
     }
     return render(request, 'inventory/device_detailed_info.html', context)
 
@@ -43,11 +43,7 @@ def device_create(request):
                 add_device = Device(
                     hostname=request.POST['hostname'],
                     mgmt_ip=request.POST['mgmt_ip'],
-                    software_version=request.POST['software_version'],
                     vendor=request.POST['vendor'],
-                    hardware_model=request.POST['hardware_model'],
-                    serial_number=request.POST['serial_number'],
-                    location=request.POST['location'],
                     date_added=timezone.now()
                 )
                 add_device.save()
@@ -65,6 +61,7 @@ def device_create(request):
 
 
 def device_inventory(request):
+    device_run_discovery()
     list_of_devices = Device.objects.all()
     context = {
         'title': 'Inventory - List Devices',

@@ -2,14 +2,14 @@
 {% block content %}
 {% if data %}
 <div class="table-responsive rounded">
-    <table id="device_inventory" class="table table-striped table-hover table-sm" style="width:100%">
+    <table id="device_inventory" class="table table-hover table-sm" style="width:100%">
         <thead>
             <tr>
                 <th><i class="fas fa-signature"></i> Hostname</th>
                 <th><i class="fas fa-at"></i> IP</th>
-                <th><i class="fas fa-code-branch"></i> Software</th>
                 <th><i class="fas fa-briefcase"></i> Vendor</th>
                 <th><i class="fas fa-sitemap"></i> Model</th>
+                <th><i class="fas fa-code-branch"></i> Software</th>
                 <th><i class="fas fa-barcode"></i> Serial Number</th>
                 <th><i class="fas fa-search-location"></i> Location</th>
                 <th><i class="fas fa-calendar-day"></i> Date Added</th>
@@ -25,15 +25,15 @@
                 </a>
                 </td>
                 <td>{{ device.mgmt_ip }}</td>
-                <td>{{ device.software_version }}</td>
                 <td>{{ device.vendor }}</td>
                 <td>{{ device.hardware_model }}</td>
+                <td>{{ device.software_version }}</td>
                 <td>{{ device.serial_number }}</td>
                 <td>{{ device.location }}</td>
                 <td>{{ device.date_added }}</td>
                 <td>
                     <a href="{% url 'inventory:device_delete' device.id %}">
-                        <i class="fas fa-trash-alt text-danger"></i>
+                        <i class="fas fa-trash-alt fa-lg text-danger"></i>
                     </a>
                 </td>
             </tr>
