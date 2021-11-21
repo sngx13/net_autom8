@@ -53,10 +53,9 @@ def device_run_discovery():
                     version = conn.send_command('show version')
                     output = version.textfsm_parse_output()
                     for i in output:
-                        host.software_version = i['rommon'] + '' + i['version']
+                        host.software_version = i['rommon'] + ' ' + i['version']
                         host.serial_number = i['serial'][0]
                         host.hardware_model = i['hardware'][0]
                         host.save()
             except Exception as error:
-                print({'status': 'error', 'error_msg': str(error)})
                 return {'status': 'error', 'error_msg': str(error)}

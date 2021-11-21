@@ -12,7 +12,7 @@
 </div>
 {% endif %}
 {% endblock %}
-{% block scripts %}
+{% block javascript %}
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script src="{% static 'js/dashboard/dashboard.js' %}"></script>
 <script>
@@ -22,4 +22,4 @@
     google.charts.setOnLoadCallback(function () { drawDeviceInventoryChart(deviceInventoryChartData) });
     google.charts.setOnLoadCallback(function () { drawDeviceCountChart(deviceCountChartData) });
 </script>
-{% endblock scripts %}
+{% endblock javascript %}

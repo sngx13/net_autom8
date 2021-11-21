@@ -20,7 +20,7 @@
             {% for device in data %}
             <tr>
                 <td>
-                    <a class="btn btn-sm btn-primary" href="{% url 'inventory:device_detailed_info' device.id %}" onclick="spinner_toggle_on();">
+                    <a class="btn btn-sm btn-dark" href="{% url 'inventory:device_detailed_info' device.id %}" onclick="spinner_toggle_on();">
                     {{ device.hostname }}
                 </a>
                 </td>
@@ -41,9 +41,16 @@
         </tbody>
     </table>
 </div>
+<div>
+    <p>Force device discovery</p>
+    <button class="btn btn-sm btn-primary">
+        <i class="fas fa-search"></i>
+        Discover
+    </button>
+</div>
 {% endif %}
 {% endblock %}
-{% block scripts %}
+{% block javascript %}
 <script>
     $(document).ready(function () {
         $('#device_inventory').DataTable(
@@ -81,4 +88,4 @@
         );
     });
 </script>
-{% endblock scripts %}
+{% endblock javascript %}
