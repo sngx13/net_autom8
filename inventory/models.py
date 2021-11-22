@@ -9,5 +9,5 @@ class Device(models.Model):
     serial_number = models.CharField(max_length=255)
     vendor = models.CharField(max_length=255)
     hardware_model = models.CharField(max_length=255)
-    location = models.CharField(max_length=255)
+    #location = models.CharField(max_length=255)
     date_added = models.DateTimeField(default=timezone.now())

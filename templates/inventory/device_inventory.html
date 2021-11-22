@@ -11,7 +11,6 @@
                 <th><i class="fas fa-sitemap"></i> Model</th>
                 <th><i class="fas fa-code-branch"></i> Software</th>
                 <th><i class="fas fa-barcode"></i> Serial Number</th>
-                <th><i class="fas fa-search-location"></i> Location</th>
                 <th><i class="fas fa-calendar-day"></i> Date Added</th>
                 <th></th>
             </tr>
@@ -29,7 +28,6 @@
                 <td>{{ device.hardware_model }}</td>
                 <td>{{ device.software_version }}</td>
                 <td>{{ device.serial_number }}</td>
-                <td>{{ device.location }}</td>
                 <td>{{ device.date_added }}</td>
                 <td>
                     <a href="{% url 'inventory:device_delete' device.id %}">
@@ -40,13 +38,6 @@
             {% endfor %}
         </tbody>
     </table>
-</div>
-<div>
-    <p>Force device discovery</p>
-    <button class="btn btn-sm btn-primary">
-        <i class="fas fa-search"></i>
-        Discover
-    </button>
 </div>
 {% endif %}
 {% endblock %}

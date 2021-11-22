@@ -48,6 +48,7 @@ def device_create(request):
                 )
                 add_device.save()
                 messages.success(request, 'Device was added successfully!')
+                device_run_discovery()
             except Exception as error:
                 messages.error(request, str(error))
         else:
@@ -61,7 +62,6 @@ def device_create(request):
 
 
 def device_inventory(request):
-    device_run_discovery()
     list_of_devices = Device.objects.all()
     context = {
         'title': 'Inventory - List Devices',

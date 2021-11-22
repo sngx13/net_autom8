@@ -6,7 +6,9 @@ from scrapli import Scrapli
 
 project_dir = os.getcwd()
 auth_config = configparser.ConfigParser()
-auth_config.read(f'{project_dir}/inventory/authentication/device_credentials.ini')
+auth_config.read(
+    f'{project_dir}/inventory/authentication/device_credentials.ini'
+)
 cli_username = auth_config['cli_logins']['username']
 cli_password = auth_config['cli_logins']['password']
 
