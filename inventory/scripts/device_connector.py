@@ -7,8 +7,7 @@ from scrapli import Scrapli
 project_dir = os.getcwd()
 auth_config = configparser.ConfigParser()
 auth_config.read(
-    f'{project_dir}/inventory/authentication/device_credentials.ini'
-)
+    f'{project_dir}/inventory/authentication/device_credentials.ini')
 cli_username = auth_config['cli_logins']['username']
 cli_password = auth_config['cli_logins']['password']
 
@@ -59,6 +58,6 @@ def device_run_discovery():
                         host.serial_number = i['serial'][0]
                         host.hardware_model = i['hardware'][0]
                         host.save()
-                return {'status': 'success'}
             except Exception as error:
                 return {'status': 'error', 'error_msg': str(error)}
+    return {'status': 'success'}

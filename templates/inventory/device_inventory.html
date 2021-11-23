@@ -19,7 +19,7 @@
             {% for device in data %}
             <tr>
                 <td>
-                    <a class="btn btn-sm btn-dark" href="{% url 'inventory:device_detailed_info' device.id %}" onclick="spinner_toggle_on();">
+                    <a class="badge bg-secondary text-decoration-none" href="{% url 'inventory:device_detailed_info' device.id %}" onclick="spinner_toggle_on();">
                     {{ device.hostname }}
                 </a>
                 </td>
@@ -31,7 +31,7 @@
                 <td>{{ device.date_added }}</td>
                 <td>
                     <a href="{% url 'inventory:device_delete' device.id %}">
-                        <i class="fas fa-trash-alt fa-lg text-danger"></i>
+                        <i class="fas fa-trash-alt fa-md text-danger"></i>
                     </a>
                 </td>
             </tr>
