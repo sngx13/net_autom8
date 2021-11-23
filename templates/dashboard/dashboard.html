@@ -4,10 +4,15 @@
 {% if data %}
 <div class="row">
     <div class="col-md-6">
-        <div id="DashboardDevicesInventory" style="width: auto; height: 480px;"></div>
+        <div id="DashboardDevicesInventory" style="width: auto; height: 420px;"></div>
     </div>
     <div class="col-md-6">
-        <div id="DashboardDevicesCount" style="width: auto; height: 480px;"></div>
+        <div id="DashboardDevicesCount" style="width: auto; height: 420px;"></div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div id="DashboardDeviceModels" style="width: auto; height: 420px;"></div>
     </div>
 </div>
 {% endif %}
@@ -17,9 +22,13 @@
 <script src="{% static 'js/dashboard/dashboard.js' %}"></script>
 <script>
     google.charts.load('current', { 'packages': ['corechart'] });
-    var deviceInventoryChartData = {{ data.inventory_chart | safe }};
-    var deviceCountChartData = {{ data.device_list_chart | safe }};
+    //
+    var deviceInventoryChartData = {{ data.inventory_chart|safe }};
+    var deviceCountChartData = {{ data.device_list_chart|safe }};
+    var deviceModelsChartData = {{ data.device_models_chart|safe }};
+    //
     google.charts.setOnLoadCallback(function () { drawDeviceInventoryChart(deviceInventoryChartData) });
     google.charts.setOnLoadCallback(function () { drawDeviceCountChart(deviceCountChartData) });
+    google.charts.setOnLoadCallback(function () { drawDeviceModelsChart(deviceModelsChartData) });
 </script>
 {% endblock javascript %}

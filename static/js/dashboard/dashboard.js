@@ -1,5 +1,3 @@
-google.charts.load('current', { 'packages': ['corechart'] });
-
 function drawDeviceInventoryChart(ChartData) {
     var data = new google.visualization.DataTable(ChartData);
     var options = {
@@ -38,7 +36,6 @@ function drawDeviceCountChart(ChartData) {
     var data = new google.visualization.DataTable(ChartData);
     var options = {
         title: 'Device Count',
-        //colors: ['red'],
         legend: 'none',
         pieSliceText: 'value',
         pieSliceTextStyle: {
@@ -58,5 +55,33 @@ function drawDeviceCountChart(ChartData) {
         }
     };
     var chart = new google.visualization.PieChart(document.getElementById('DashboardDevicesCount'));
+    chart.draw(data, options);
+};
+
+function drawDeviceModelsChart(ChartData) {
+    var data = new google.visualization.DataTable(ChartData);
+    var options = {
+        title: 'Device Models',
+        legend: 'none',
+        fontName: 'Roboto',
+        fontSize: 12,
+        bar: {
+            groupWidth: '40%'
+        },
+        hAxis: {
+            textStyle: {
+                bold: true,
+                italic: false
+            }
+        },
+        vAxis: {
+            textStyle: {
+                fontSize: 10,
+                bold: false,
+                italic: true
+            },
+        },
+    };
+    var chart = new google.visualization.BarChart(document.getElementById('DashboardDeviceModels'));
     chart.draw(data, options);
 };

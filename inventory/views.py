@@ -2,12 +2,12 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.http.response import HttpResponseRedirect
 from django.utils import timezone
+from celery.result import AsyncResult
 from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm
 from .scripts.device_bulk_import import inventory_importer
 from .scripts.device_connector import device_get_details
 from .tasks import task_run_device_discovery
-from celery.result import AsyncResult
 
 
 def device_detailed_info(request, device_id):
@@ -24,7 +24,8 @@ def device_delete(request, device_id):
     device_to_delete = Device.objects.get(pk=device_id)
     device_to_delete.delete()
     messages.success(
-        request, f'Device: {device_to_delete.hostname} was deleted successfully!'
+        request,
+        f'Device: {device_to_delete.hostname} was deleted successfully!'
     )
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
@@ -58,13 +59,16 @@ def device_create(request):
             except Exception as error:
                 messages.error(request, str(error))
         else:
-            messages.error(request, 'Invalid information provided!')
+            messages.error(
+                request,
+                'Invalid information provided!'
+            )
         context = {
             'title': 'Inventory - Create Device',
             'card_header': 'Inventory - Create Device',
             'form': form
         }
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return HttpResponseRedirect(request.path)
 
 
 def device_inventory_import(request):
@@ -98,7 +102,7 @@ def device_inventory_import(request):
                 return render(request, 'inventory/device_inventory_import.html', context)
         else:
             messages.error(request, 'No file was provided!')
-        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+        return HttpResponseRedirect(request.path)
 
 
 def device_inventory(request):

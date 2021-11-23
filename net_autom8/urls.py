@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 urlpatterns = [
     path('dashboard/', include('dashboard.urls')),
     path('inventory/', include('inventory.urls')),
+    path('housekeeping/', include('housekeeping.urls')),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),

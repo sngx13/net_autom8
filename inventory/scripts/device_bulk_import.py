@@ -23,6 +23,12 @@ def inventory_importer(file):
                 )
             )
         Device.objects.bulk_create(data)
-        return {'status': 'success'}
+        return {
+            'status': 'success',
+            'message': 'CSV file imported successfully!'
+        }
     except Exception as error:
-        return {'status': 'fail', 'message': str(error)}
+        return {
+            'status': 'fail',
+            'message': str(error)
+        }
