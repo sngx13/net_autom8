@@ -59,5 +59,6 @@ def device_run_discovery():
                         host.serial_number = i['serial'][0]
                         host.hardware_model = i['hardware'][0]
                         host.save()
+                return {'status': 'success'}
             except Exception as error:
                 return {'status': 'error', 'error_msg': str(error)}

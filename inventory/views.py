@@ -5,7 +5,8 @@ from django.utils import timezone
 from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm
 from .scripts.inventory_import import inventory_importer
-from .scripts.inventory_device_connector import device_get_details, device_run_discovery
+from .scripts.inventory_device_connector import device_get_details
+from .tasks import task_run_device_discovery
 
 
 def device_detailed_info(request, device_id):
@@ -16,15 +17,6 @@ def device_detailed_info(request, device_id):
         'data': device_get_details(device.mgmt_ip, device.vendor)
     }
     return render(request, 'inventory/device_detailed_info.html', context)
-
-
-def device_delete(request, device_id):
-    device_to_delete = Device.objects.get(pk=device_id)
-    device_to_delete.delete()
-    messages.success(
-        request, f'Device: {device_to_delete.hostname} was deleted successfully!'
-    )
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def device_create(request):
@@ -48,7 +40,8 @@ def device_create(request):
                 )
                 add_device.save()
                 messages.success(request, 'Device was added successfully!')
-                device_run_discovery()
+                task = task_run_device_discovery.delay()
+                print(task)
             except Exception as error:
                 messages.error(request, str(error))
         else:
@@ -61,14 +54,13 @@ def device_create(request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-def device_inventory(request):
-    list_of_devices = Device.objects.all()
-    context = {
-        'title': 'Inventory - List Devices',
-        'card_header': 'Inventory - List Devices',
-        'data': list_of_devices,
-    }
-    return render(request, 'inventory/device_inventory.html', context)
+def device_delete(request, device_id):
+    device_to_delete = Device.objects.get(pk=device_id)
+    device_to_delete.delete()
+    messages.success(
+        request, f'Device: {device_to_delete.hostname} was deleted successfully!'
+    )
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def device_inventory_import(request):
@@ -82,6 +74,11 @@ def device_inventory_import(request):
         return render(request, 'inventory/device_inventory_import.html', context)
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
+        context = {
+            'title': 'Inventory - Import Devices',
+            'card_header': 'Inventory - Import Devices',
+            'form': form
+        }
         if request.FILES:
             if form.is_valid():
                 result = inventory_importer(request.FILES['file'])
@@ -89,11 +86,19 @@ def device_inventory_import(request):
                     messages.success(request, 'Import was successful!')
                 else:
                     messages.error(request, result)
+            else:
+                return render(request, 'inventory/device_inventory_import.html', context)
         else:
             messages.error(request, 'No file was provided!')
-        context = {
-            'title': 'Inventory - Import Devices',
-            'card_header': 'Inventory - Import Devices',
-            'form': form
-        }
         return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+def device_inventory(request):
+    list_of_devices = Device.objects.all()
+    context = {
+        'title': 'Inventory - List Devices',
+        'card_header': 'Inventory - List Devices',
+        'data': list_of_devices,
+    }
+    return render(request, 'inventory/device_inventory.html', context)
+

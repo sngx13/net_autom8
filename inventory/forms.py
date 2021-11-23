@@ -5,7 +5,7 @@ from django.utils.html import mark_safe
 
 
 VENDORS = (
-    ('', '--->Select<---'),
+    ('', 'Please Select'),
     ('Cisco', 'Cisco'),
     ('Juniper', 'Juniper'),
     ('Nokia', 'Nokia'),
