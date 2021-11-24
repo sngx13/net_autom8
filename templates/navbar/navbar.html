@@ -30,11 +30,11 @@
             Inventory
           </a>
           <ul class="dropdown-menu" aria-labelledby="InventoryDropdown">
-            <li><a class="dropdown-item" href="{% url 'inventory:device_inventory' %}">
+            <li><a class="dropdown-item" href="{% url 'inventory:device_inventory_list' %}">
                 <i class="fas fa-list-ul"></i>
                 Device List</a>
             </li>
-            <li><a class="dropdown-item" href="{% url 'inventory:device_create' %}">
+            <li><a class="dropdown-item" href="{% url 'inventory:device_inventory_create' %}">
               <i class="fas fa-plus-circle"></i>
               Add Device</a></li>
             <li><a class="dropdown-item" href="{% url 'inventory:device_inventory_import' %}">

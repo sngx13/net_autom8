@@ -10,17 +10,21 @@ from .scripts.device_connector import device_get_details
 from .tasks import task_run_device_discovery
 
 
-def device_detailed_info(request, device_id):
+def device_detailed_information(request, device_id):
     device = Device.objects.get(pk=device_id)
     context = {
         'title': 'Device Detailed Information',
         'card_header': f'Device Detailed Information - {device.hostname} {device.mgmt_ip}',
         'data': device_get_details(device.mgmt_ip, device.vendor)
     }
-    return render(request, 'inventory/device_detailed_info.html', context)
+    return render(
+        request,
+        'inventory/device_detailed_information.html',
+        context
+    )
 
 
-def device_delete(request, device_id):
+def device_inventory_delete(request, device_id):
     device_to_delete = Device.objects.get(pk=device_id)
     device_to_delete.delete()
     messages.success(
@@ -30,7 +34,7 @@ def device_delete(request, device_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-def device_create(request):
+def device_inventory_create(request):
     if request.method == 'GET':
         form = DeviceCreateForm(request.POST)
         context = {
@@ -38,7 +42,11 @@ def device_create(request):
             'card_header': 'Inventory - Create Device',
             'form': form
         }
-        return render(request, 'inventory/device_create.html', context)
+        return render(
+            request,
+            'inventory/device_inventory_create.html',
+            context
+        )
     elif request.method == 'POST':
         form = DeviceCreateForm(request.POST)
         if form.is_valid():
@@ -115,11 +123,11 @@ def device_inventory_import(request):
         return HttpResponseRedirect(request.path)
 
 
-def device_inventory(request):
+def device_inventory_list(request):
     list_of_devices = Device.objects.all()
     context = {
         'title': 'Inventory - List Devices',
         'card_header': 'Inventory - List Devices',
         'data': list_of_devices,
     }
-    return render(request, 'inventory/device_inventory.html', context)
+    return render(request, 'inventory/device_inventory_list.html', context)
