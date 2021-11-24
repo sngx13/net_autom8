@@ -1,29 +1,32 @@
 {% extends "base_template/base.html"%}
 {% block content %}
+{% if data.celery_information %}
 <div class="col-md-6">
     <ul>
-        {% for key, value in data.celery_statistics.items %}
+        {% for key, value in data.celery_information.celery_statistics.items %}
         <li><i class="fas fa-signature"></i> Worker Name: {{ key }}</li>
         <li><i class="fas fa-business-time"></i> Worker Uptime: {{ value.uptime }} seconds</li>
         <li><i class="fas fa-lightbulb"></i> PID: {{ value.pid }}</li>
-        <li><i class="fas fa-calculator"></i> Total Jobs:{{ value.pool.writes.total }}</li>
+        <li><i class="fas fa-calculator"></i> Total Jobs: {{ value.pool.writes.total }}</li>
         {% endfor %}
-        <li><i class="far fa-calendar-check"></i> Registered Tasks: {{ data.registered_tasks }}</li>
-        <li><i class="fas fa-tasks"></i> Scheduled Tasks: {{ data.scheduled_tasks }}</li>
-        <li><i class="fas fa-hammer"></i> Active Tasks: {{ data.active_tasks }}</li>
-</ul>
+        <li><i class="far fa-calendar-check"></i> Registered Tasks: {{ data.celery_information.registered_tasks }}</li>
+        <li><i class="fas fa-tasks"></i> Scheduled Tasks: {{ data.celery_information.scheduled_tasks }}</li>
+        <li><i class="fas fa-hammer"></i> Active Tasks: {{ data.celery_information.active_tasks }}</li>
+    </ul>
 </div>
+{% endif %}
+{% if data.tasks_list %}
 <div class="col-md-12">
     <div class="table-responsive rounded">
         <table id="celery_completed_tasks" class="table table-hover table-sm" style="width:100%">
             <thead>
                 <tr>
-                    <th>Task ID</th>
-                    <th>Task Name</th>
-                    <th>Status</th>
-                    <th>Result</th>
-                    <th>Requestor</th>
-                    <th>Started</th>
+                    <th><i class="fas fa-barcode"></i> Task ID</th>
+                    <th><i class="fas fa-signature"></i> Task Name</th>
+                    <th><i class="fas fa-battery-full"></i> Status</th>
+                    <th><i class="fas fa-poll"></i> Result</th>
+                    <th><i class="fas fa-users-cog"></i> Requestor</th>
+                    <th><i class="fas fa-play-circle"></i> Started</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,11 +37,12 @@
                     <td>{{ completed_task.task_status }}</td>
                     <td>{{ completed_task.task_result }}</td>
                     <td>{{ completed_task.task_requested_by }}</td>
-                    <td>{{ completed_task.start_time }}</td>
+                    <td>{{ completed_task.start_time|date:"Y-m-d H:i:s" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+{% endif %}
 {% endblock %}
