@@ -1,4 +1,44 @@
 {% extends "base_template/base.html"%}
 {% block content %}
-{{ data }}
+<div class="col-md-6">
+    <ul>
+        {% for key, value in data.celery_statistics.items %}
+        <li><i class="fas fa-signature"></i> Worker Name: {{ key }}</li>
+        <li><i class="fas fa-business-time"></i> Worker Uptime: {{ value.uptime }} seconds</li>
+        <li><i class="fas fa-lightbulb"></i> PID: {{ value.pid }}</li>
+        <li><i class="fas fa-calculator"></i> Total Jobs:{{ value.pool.writes.total }}</li>
+        {% endfor %}
+        <li><i class="far fa-calendar-check"></i> Registered Tasks: {{ data.registered_tasks }}</li>
+        <li><i class="fas fa-tasks"></i> Scheduled Tasks: {{ data.scheduled_tasks }}</li>
+        <li><i class="fas fa-hammer"></i> Active Tasks: {{ data.active_tasks }}</li>
+</ul>
+</div>
+<div class="col-md-12">
+    <div class="table-responsive rounded">
+        <table id="celery_completed_tasks" class="table table-hover table-sm" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Task ID</th>
+                    <th>Task Name</th>
+                    <th>Status</th>
+                    <th>Result</th>
+                    <th>Requestor</th>
+                    <th>Started</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for completed_task in data.tasks_list %}
+                <tr>
+                    <td>{{ completed_task.task_id }}</td>
+                    <td>{{ completed_task.task_name }}</td>
+                    <td>{{ completed_task.task_status }}</td>
+                    <td>{{ completed_task.task_result }}</td>
+                    <td>{{ completed_task.task_requested_by }}</td>
+                    <td>{{ completed_task.start_time }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
 {% endblock %}

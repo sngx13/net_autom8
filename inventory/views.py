@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.http.response import HttpResponseRedirect
 from django.utils import timezone
-from celery.result import AsyncResult
+from housekeeping.models import CeleryJobResults
 from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm
 from .scripts.device_bulk_import import inventory_importer
@@ -51,10 +51,15 @@ def device_create(request):
                 )
                 add_device.save()
                 task = task_run_device_discovery.delay()
-                task_result = AsyncResult(task.id)
+                task_add_to_db = CeleryJobResults(
+                    task_id=task.id,
+                    task_requested_by=request.user,
+                    start_time=timezone.now()
+                )
+                task_add_to_db.save()
                 messages.success(
                     request,
-                    f'Device added successfully! {task_result.status} discovery: {task.id}'
+                    f'Device added successfully! Pending discovery: {task.id}'
                 )
             except Exception as error:
                 messages.error(request, str(error))
@@ -92,10 +97,15 @@ def device_inventory_import(request):
                 result = inventory_importer(request.FILES['file'])
                 if result['status'] == 'success':
                     task = task_run_device_discovery.delay()
-                    task_result = AsyncResult(task.id)
+                    task_add_to_db = CeleryJobResults(
+                        task_id=task.id,
+                        task_requested_by=request.user,
+                        start_time=timezone.now()
+                    )
+                    task_add_to_db.save()
                     messages.success(
                         request,
-                        f'Import was successful! {task_result.status} discovery: {task.id}')
+                        f'Import was successful! Pending discovery: {task.id}')
                 else:
                     messages.error(request, result)
             else:
