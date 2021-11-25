@@ -142,7 +142,12 @@ def device_inventory_edit(request, device_id):
             form.save()
             messages.success(
                 request,
-                f'Device {device.hostname} has changed to ' + request.POST['hostname']
+                f'Changes to: {device.hostname} succeeded!'
+            )
+        else:
+            messages.error(
+                request,
+                'There has been a problem editing the device!'
             )
         return HttpResponseRedirect(request.path)
 
