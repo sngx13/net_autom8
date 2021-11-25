@@ -9,9 +9,24 @@
         <li><i class="fas fa-lightbulb"></i> PID: {{ value.pid }}</li>
         <li><i class="fas fa-calculator"></i> Total Jobs: {{ value.pool.writes.total }}</li>
         {% endfor %}
-        <li><i class="far fa-calendar-check"></i> Registered Tasks: {{ data.celery_information.registered_tasks }}</li>
-        <li><i class="fas fa-tasks"></i> Scheduled Tasks: {{ data.celery_information.scheduled_tasks }}</li>
-        <li><i class="fas fa-hammer"></i> Active Tasks: {{ data.celery_information.active_tasks }}</li>
+        <li>
+            <i class="far fa-calendar-check"></i> Registered Tasks:
+                {% for task in data.celery_information.registered_tasks %}
+                <ul><li>{{ task }}</li></ul>
+                {% endfor %}
+        </li>
+        <li>
+            <i class="fas fa-tasks"></i> Scheduled Tasks:
+            {% for task in data.celery_information.scheduled_tasks %}
+                <ul><li>{{ task }}</li></ul>
+            {% endfor %}
+        </li>
+        <li>
+            <i class="fas fa-hammer"></i> Active Tasks:
+            {% for task in data.celery_information.active_tasks %}
+                <ul><li>{{ task }}</li></ul>
+            {% endfor %}
+        </li>
     </ul>
 </div>
 {% endif %}
@@ -34,7 +49,13 @@
                 <tr>
                     <td>{{ completed_task.task_id }}</td>
                     <td>{{ completed_task.task_name }}</td>
-                    <td>{{ completed_task.task_status }}</td>
+                    <td>
+                        {% if 'COMPLETED' in completed_task.task_status %}
+                            <span class="badge bg-success">{{ completed_task.task_status }}</span>
+                        {% else %}
+                            <span class="badge bg-danger">{{ completed_task.task_status }}</span>
+                        {% endif %}
+                    </td>
                     <td>
                         <a href="#" data-bs-toggle="modal" data-bs-target="#task_result_modal">
                             <i class="fas fa-info-circle"></i>
