@@ -35,7 +35,26 @@
                     <td>{{ completed_task.task_id }}</td>
                     <td>{{ completed_task.task_name }}</td>
                     <td>{{ completed_task.task_status }}</td>
-                    <td>{{ completed_task.task_result }}</td>
+                    <td>
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#task_result_modal">
+                            <i class="fas fa-info-circle"></i>
+                        </a>
+                        <div class="modal fade" id="task_result_modal" tabindex="-1">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <h5 class="modal-title">Task Result - Information</h5>
+                                  </div>
+                                  <div class="modal-body">
+                                    <pre>{{ completed_task.task_result }}</pre>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
                     <td>{{ completed_task.task_requested_by }}</td>
                     <td>{{ completed_task.start_time|date:"Y-m-d H:i:s" }}</td>
                 </tr>

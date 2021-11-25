@@ -39,6 +39,7 @@ def device_get_details(mgmt_ip, vendor):
 
 
 def device_run_discovery():
+    progress = []
     devices = Device.objects.all()
     for host in devices:
         if 'Cisco' in host.vendor:
@@ -53,6 +54,9 @@ def device_run_discovery():
                 }
                 try:
                     with Scrapli(**device) as conn:
+                        progress.append(
+                            f'[+] Discovering: {host.hostname}@{host.mgmt_ip}'
+                        )
                         version = conn.send_command('show version')
                         output = version.textfsm_parse_output()
                         for i in output:
@@ -60,6 +64,11 @@ def device_run_discovery():
                             host.serial_number = i['serial'][0]
                             host.hardware_model = i['hardware'][0]
                             host.save()
+                            progress.append(
+                                f'[+] Updating db entry for: {host.hostname}'
+                                + f' with S/N: {host.serial_number}'
+                                + f' & Model: {host.hardware_model}'
+                            )
                 except Exception as error:
                     return {'status': 'error', 'message': str(error)}
         else:
@@ -67,5 +76,6 @@ def device_run_discovery():
             pass
     return {
         'status': 'success',
-        'message': 'Discovery task completed successfully!'
+        'message': 'Discovery task completed successfully!',
+        'details': progress
     }
