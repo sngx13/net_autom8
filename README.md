@@ -2,4 +2,4 @@
 
 ! Powered By: Django / Bootstrap5 / DataTables / Google Charts / Scrapli
 
-Job Scheduling: Celery & Redis
+## Job Scheduling: Celery & Redis
