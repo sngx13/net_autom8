@@ -6,7 +6,7 @@ from housekeeping.models import CeleryJobResults
 from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm
 from .scripts.device_bulk_import import inventory_importer
-from .scripts.device_connector import device_get_details
+from .scripts.device_connector_ssh import device_get_details
 from .tasks import task_run_device_discovery
 
 
@@ -22,6 +22,21 @@ def device_detailed_information(request, device_id):
         'inventory/device_detailed_information.html',
         context
     )
+
+
+def device_inventory_force_discovery(request):
+    task = task_run_device_discovery.delay()
+    task_add_to_db = CeleryJobResults(
+        task_id=task.id,
+        task_requested_by=request.user,
+        start_time=timezone.now()
+    )
+    task_add_to_db.save()
+    messages.success(
+        request,
+        f'Creating discovery task: {task.id}'
+    )
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def device_inventory_delete(request, device_id):

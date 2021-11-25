@@ -19,7 +19,7 @@
             {% for device in data %}
             <tr>
                 <td>
-                    <a class="badge bg-secondary text-decoration-none" href="{% url 'inventory:device_detailed_information' device.id %}" onclick="spinner_toggle_on();">
+                    <a class="badge bg-primary text-decoration-none" href="{% url 'inventory:device_detailed_information' device.id %}" onclick="spinner_toggle_on();">
                     {{ device.hostname }}
                 </a>
                 </td>
@@ -30,11 +30,11 @@
                 <td>{{ device.serial_number }}</td>
                 <td>{{ device.date_added }}</td>
                 <td>
-                    <a href="{% url 'inventory:device_inventory_edit' device.id %}">
-                        <i class="fas fa-edit text-decoration-none"></i>
+                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_edit' device.id %}">
+                        <i class="fas fa-edit text-info"></i>
                     </a>
-                    <a href="{% url 'inventory:device_inventory_delete' device.id %}">
-                        <i class="fas fa-trash-alt fa-md text-danger text-decoration-none"></i>
+                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_delete' device.id %}">
+                        <i class="fas fa-trash-alt text-danger"></i>
                     </a>
                 </td>
             </tr>
@@ -42,6 +42,10 @@
         </tbody>
     </table>
 </div>
+<a class="btn btn-sm btn-primary" href="{% url 'inventory:device_inventory_force_discovery' %}">
+    <i class="fas fa-sync"></i>
+        Force Discovery
+</a>
 {% else %}
 <h5 class="my-5 fw-bold text-center">No devices are currently present in the database...</h5>
 {% endif %}

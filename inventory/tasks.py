@@ -6,7 +6,7 @@ from housekeeping.models import CeleryJobResults
 
 @shared_task(bind=True, track_started=True)
 def task_run_device_discovery(self):
-    from .scripts.device_connector import device_run_discovery
+    from .scripts.device_connector_ssh import device_run_discovery
     task_status = device_run_discovery()
     task_update_db = CeleryJobResults.objects.get(task_id=self.request.id)
     task_update_db.task_name = self.name
