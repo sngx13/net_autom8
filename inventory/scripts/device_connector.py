@@ -8,15 +8,20 @@ project_dir = os.getcwd()
 auth_config = configparser.ConfigParser()
 auth_config.read(
     f'{project_dir}/inventory/authentication/device_credentials.ini')
-cli_username = auth_config['cli_logins']['username']
-cli_password = auth_config['cli_logins']['password']
 
 
-def device_get_details(mgmt_ip, vendor):
-    if 'Cisco' in vendor:
+def device_get_details(device_id):
+    host = Device.objects.get(pk=device_id)
+    if 'Cisco' in host.vendor:
         platform = 'cisco_iosxe'
+    if host.username and host.password:
+        cli_username = host.username
+        cli_password = host.password
+    else:
+        cli_username = auth_config['cli_logins']['username']
+        cli_password = auth_config['cli_logins']['password']
     device = {
-        'host': mgmt_ip,
+        'host': host.mgmt_ip,
         'auth_username': cli_username,
         'auth_password': cli_password,
         'auth_strict_key': False,
@@ -44,6 +49,12 @@ def device_run_discovery():
     for host in devices:
         if 'Cisco' in host.vendor:
             platform = 'cisco_iosxe'
+            if host.username and host.password:
+                cli_username = host.username
+                cli_password = host.password
+            else:
+                cli_username = auth_config['cli_logins']['username']
+                cli_password = auth_config['cli_logins']['password']
             if not host.serial_number:
                 device = {
                     'host': host.mgmt_ip,

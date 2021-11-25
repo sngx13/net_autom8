@@ -5,7 +5,7 @@ from django.utils.html import mark_safe
 
 
 VENDORS = (
-    ('', 'Please Select'),
+    ('', '--- Select ---'),
     ('Cisco', 'Cisco'),
     ('Juniper', 'Juniper'),
     ('Nokia', 'Nokia'),
@@ -36,4 +36,18 @@ class DeviceCreateForm(forms.Form):
         label=mark_safe('<i class="fas fa-briefcase"></i> Vendor'),
         widget=forms.Select(attrs={'class': 'form-control form-control-sm'}),
         choices=VENDORS
+    )
+    username = forms.CharField(
+        label=mark_safe('<i class="fas fa-users-cog"></i> Username'),
+        widget=forms.TextInput(
+            attrs={'class': 'form-control form-control-sm', 'placeholder': 'Optional field'}
+        ),
+        required=False
+    )
+    password = forms.CharField(
+        label=mark_safe('<i class="fas fa-key"></i> Password'),
+        widget=forms.PasswordInput(
+            attrs={'class': 'form-control form-control-sm', 'placeholder': 'Optional field'}
+        ),
+        required=False
     )

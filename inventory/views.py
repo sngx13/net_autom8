@@ -15,7 +15,7 @@ def device_detailed_information(request, device_id):
     context = {
         'title': 'Device Detailed Information',
         'card_header': f'Device Detailed Information - {device.hostname} {device.mgmt_ip}',
-        'data': device_get_details(device.mgmt_ip, device.vendor)
+        'data': device_get_details(device_id)
     }
     return render(
         request,

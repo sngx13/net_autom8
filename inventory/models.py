@@ -4,6 +4,8 @@ from django.utils import timezone
 
 class Device(models.Model):
     hostname = models.CharField(unique=True, max_length=255)
+    username = models.CharField(blank=True, max_length=255, null=True)
+    password = models.CharField(blank=True, max_length=255, null=True)
     mgmt_ip = models.CharField(unique=True, max_length=12)
     software_version = models.CharField(max_length=255)
     serial_number = models.CharField(max_length=255)
