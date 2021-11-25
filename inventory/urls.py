@@ -16,6 +16,11 @@ urlpatterns = [
         name='device_detailed_information'
     ),
     path(
+        'device_inventory_edit/<device_id>/',
+        login_required(views.device_inventory_edit),
+        name='device_inventory_edit'
+    ),
+    path(
         'device_inventory_import/',
         login_required(views.device_inventory_import),
         name='device_inventory_import'

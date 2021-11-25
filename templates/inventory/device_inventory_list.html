@@ -30,8 +30,11 @@
                 <td>{{ device.serial_number }}</td>
                 <td>{{ device.date_added }}</td>
                 <td>
+                    <a href="{% url 'inventory:device_inventory_edit' device.id %}">
+                        <i class="fas fa-edit text-decoration-none"></i>
+                    </a>
                     <a href="{% url 'inventory:device_inventory_delete' device.id %}">
-                        <i class="fas fa-trash-alt fa-md text-danger"></i>
+                        <i class="fas fa-trash-alt fa-md text-danger text-decoration-none"></i>
                     </a>
                 </td>
             </tr>

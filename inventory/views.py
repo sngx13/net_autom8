@@ -4,7 +4,7 @@ from django.http.response import HttpResponseRedirect
 from django.utils import timezone
 from housekeeping.models import CeleryJobResults
 from .models import Device
-from .forms import UploadFileForm, DeviceCreateForm
+from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm
 from .scripts.device_bulk_import import inventory_importer
 from .scripts.device_connector import device_get_details
 from .tasks import task_run_device_discovery
@@ -25,30 +25,29 @@ def device_detailed_information(request, device_id):
 
 
 def device_inventory_delete(request, device_id):
-    device_to_delete = Device.objects.get(pk=device_id)
-    device_to_delete.delete()
+    device = Device.objects.get(pk=device_id)
+    device.delete()
     messages.success(
         request,
-        f'Device: {device_to_delete.hostname} was deleted successfully!'
+        f'Device: {device.hostname} was deleted successfully!'
     )
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def device_inventory_create(request):
+    form = DeviceCreateForm(request.POST)
+    context = {
+        'title': 'Inventory - Create Device',
+        'card_header': 'Inventory - Create Device',
+        'form': form
+    }
     if request.method == 'GET':
-        form = DeviceCreateForm(request.POST)
-        context = {
-            'title': 'Inventory - Create Device',
-            'card_header': 'Inventory - Create Device',
-            'form': form
-        }
         return render(
             request,
             'inventory/device_inventory_create.html',
             context
         )
     elif request.method == 'POST':
-        form = DeviceCreateForm(request.POST)
         if form.is_valid():
             try:
                 add_device = Device(
@@ -76,30 +75,23 @@ def device_inventory_create(request):
                 request,
                 'Invalid information provided!'
             )
-        context = {
-            'title': 'Inventory - Create Device',
-            'card_header': 'Inventory - Create Device',
-            'form': form
-        }
         return HttpResponseRedirect(request.path)
 
 
 def device_inventory_import(request):
+    form = UploadFileForm(request.POST, request.FILES)
+    context = {
+        'title': 'Inventory - Import Devices',
+        'card_header': 'Inventory - Import Devices',
+        'form': form
+    }
     if request.method == 'GET':
-        form = UploadFileForm(request.POST, request.FILES)
-        context = {
-            'title': 'Inventory - Import Devices',
-            'card_header': 'Inventory - Import Devices',
-            'form': form
-        }
-        return render(request, 'inventory/device_inventory_import.html', context)
+        return render(
+            request,
+            'inventory/device_inventory_import.html',
+            context
+        )
     if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        context = {
-            'title': 'Inventory - Import Devices',
-            'card_header': 'Inventory - Import Devices',
-            'form': form
-        }
         if request.FILES:
             if form.is_valid():
                 result = inventory_importer(request.FILES['file'])
@@ -117,9 +109,41 @@ def device_inventory_import(request):
                 else:
                     messages.error(request, result)
             else:
-                return render(request, 'inventory/device_inventory_import.html', context)
+                return render(
+                    request,
+                    'inventory/device_inventory_import.html',
+                    context
+                )
         else:
             messages.error(request, 'No file was provided!')
+        return HttpResponseRedirect(request.path)
+
+
+def device_inventory_edit(request, device_id):
+    device = Device.objects.get(pk=device_id)
+    if request.method == 'GET':
+        form = DeviceEditForm(instance=device)
+        context = {
+            'title': 'Inventory - Device Editor',
+            'card_header': f'Device Editor: {device.hostname} {device.mgmt_ip}',
+            'form': form,
+            'data': device
+        }
+        return render(request, 'inventory/device_inventory_edit.html', context)
+    elif request.method == 'POST':
+        form = DeviceEditForm(request.POST, instance=device)
+        context = {
+            'title': 'Inventory - Device Editor',
+            'card_header': f'Device Editor: {device.hostname} {device.mgmt_ip}',
+            'form': form,
+            'data': device
+        }
+        if form.is_valid():
+            form.save()
+            messages.success(
+                request,
+                f'Device {device.hostname} has changed to ' + request.POST['hostname']
+            )
         return HttpResponseRedirect(request.path)
 
 

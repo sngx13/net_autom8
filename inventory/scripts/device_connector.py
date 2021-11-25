@@ -1,7 +1,7 @@
 import configparser
 import os
-from ..models import Device
 from scrapli import Scrapli
+from ..models import Device
 
 
 project_dir = os.getcwd()
