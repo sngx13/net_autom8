@@ -2,11 +2,11 @@ from celery import shared_task
 from celery.result import AsyncResult
 from time import sleep
 from housekeeping.models import CeleryJobResults
+from .scripts.device_connector import device_run_discovery
 
 
 @shared_task(bind=True, track_started=True)
 def task_run_device_discovery(self):
-    from .scripts.device_connector_ssh import device_run_discovery
     task_status = device_run_discovery()
     task_update_db = CeleryJobResults.objects.get(task_id=self.request.id)
     task_update_db.task_name = self.name

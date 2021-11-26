@@ -3,12 +3,12 @@ from django.contrib import messages
 from django.http.response import HttpResponseRedirect
 from django.utils import timezone
 from housekeeping.models import CeleryJobResults
-from .models import Device
-from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm
 from .scripts.device_bulk_import import inventory_importer
-from .scripts.device_connector_ssh import device_get_details_via_ssh
-from .scripts.device_connector_restconf import device_get_details_via_rest
+from .scripts.device_connector import device_get_details_via_ssh
+from .scripts.device_connector import device_get_details_via_rest
 from .tasks import task_run_device_discovery
+from .models import Device, DeviceInterfaces
+from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm
 
 
 def device_detailed_information(request, device_id):
@@ -18,7 +18,9 @@ def device_detailed_information(request, device_id):
         'card_header': f'Device Detailed Information - {device.hostname} {device.mgmt_ip}',
     }
     if device.rest_conf_enabled:
-        context['data'] = {'restconf': device_get_details_via_rest(device_id)}
+        device_get_details_via_rest(device_id)
+        data = DeviceInterfaces.objects.filter(device_id=device_id)
+        context['data'] = {'restconf': data}
     if not device.rest_conf_enabled:
         context['data'] = {'ssh_cli': device_get_details_via_ssh(device_id)}
     return render(
@@ -140,23 +142,18 @@ def device_inventory_import(request):
 
 def device_inventory_edit(request, device_id):
     device = Device.objects.get(pk=device_id)
-    if request.method == 'GET':
-        form = DeviceEditForm(instance=device)
-        context = {
+    context = {
             'title': 'Inventory - Device Editor',
             'card_header': f'Device Editor: {device.hostname} {device.mgmt_ip}',
-            'form': form,
             'data': device
-        }
+    }
+    if request.method == 'GET':
+        form = DeviceEditForm(instance=device)
+        context['form'] = form
         return render(request, 'inventory/device_inventory_edit.html', context)
     elif request.method == 'POST':
         form = DeviceEditForm(request.POST, instance=device)
-        context = {
-            'title': 'Inventory - Device Editor',
-            'card_header': f'Device Editor: {device.hostname} {device.mgmt_ip}',
-            'form': form,
-            'data': device
-        }
+        context['form'] = form
         if form.is_valid():
             form.save()
             messages.success(
