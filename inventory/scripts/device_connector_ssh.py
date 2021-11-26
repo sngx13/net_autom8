@@ -10,7 +10,7 @@ auth_config.read(
     f'{project_dir}/inventory/authentication/device_credentials.ini')
 
 
-def device_get_details(device_id):
+def device_get_details_via_ssh(device_id):
     host = Device.objects.get(pk=device_id)
     if 'Cisco' in host.vendor:
         platform = 'cisco_iosxe'
@@ -69,6 +69,11 @@ def device_run_discovery():
                             f'[+] Discovering: {host.hostname}@{host.mgmt_ip}'
                         )
                         version = conn.send_command('show version')
+                        check_restconf_enabled = conn.send_command('show run | include restconf')
+                        if check_restconf_enabled.result:
+                            host.rest_conf_enabled = True
+                        if not check_restconf_enabled.result:
+                            host.rest_conf_enabled = False
                         output = version.textfsm_parse_output()
                         for i in output:
                             host.software_version = i['rommon'] + ' ' + i['version']

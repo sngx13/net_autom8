@@ -6,7 +6,8 @@ from housekeeping.models import CeleryJobResults
 from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm
 from .scripts.device_bulk_import import inventory_importer
-from .scripts.device_connector_ssh import device_get_details
+from .scripts.device_connector_ssh import device_get_details_via_ssh
+from .scripts.device_connector_restconf import device_get_details_via_rest
 from .tasks import task_run_device_discovery
 
 
@@ -15,8 +16,11 @@ def device_detailed_information(request, device_id):
     context = {
         'title': 'Device Detailed Information',
         'card_header': f'Device Detailed Information - {device.hostname} {device.mgmt_ip}',
-        'data': device_get_details(device_id)
     }
+    if device.rest_conf_enabled:
+        context['data'] = {'restconf': device_get_details_via_rest(device_id)}
+    if not device.rest_conf_enabled:
+        context['data'] = {'ssh_cli': device_get_details_via_ssh(device_id)}
     return render(
         request,
         'inventory/device_detailed_information.html',

@@ -1,6 +1,9 @@
 {% extends "base_template/base.html"%}
 {% block content %}
-{% if data %}
+{% if data.restconf %}
+{{ data.restconf }}
+{% endif %}
+{% if data.ssh_cli %}
 <div class="row">
     <div class="col-md-4">
         <div class="card">
