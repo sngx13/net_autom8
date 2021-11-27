@@ -114,6 +114,7 @@ def device_get_details_via_rest(device_id):
             http_client.verify = False
             restconf_get_interfaces(host, http_client)
             return {
+                'interfaces': DeviceInterfaces.objects.filter(device_id=device_id),
                 'version': restconf_get_hw_information(host, http_client)
             }
     except Exception as error:

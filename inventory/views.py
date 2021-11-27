@@ -7,7 +7,7 @@ from .scripts.device_bulk_import import inventory_importer
 from .scripts.device_connector import device_get_details_via_ssh
 from .scripts.device_connector import device_get_details_via_rest
 from .tasks import task_run_device_discovery
-from .models import Device, DeviceInterfaces
+from .models import Device
 from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm
 
 
@@ -18,9 +18,7 @@ def device_detailed_information(request, device_id):
         'card_header': f'Device Detailed Information - {device.hostname} {device.mgmt_ip}',
     }
     if device.rest_conf_enabled:
-        device_get_details_via_rest(device_id)
-        data = DeviceInterfaces.objects.filter(device_id=device_id)
-        context['data'] = {'restconf': data}
+        context['data'] = {'restconf': device_get_details_via_rest(device_id)}
     if not device.rest_conf_enabled:
         context['data'] = {'ssh_cli': device_get_details_via_ssh(device_id)}
     return render(

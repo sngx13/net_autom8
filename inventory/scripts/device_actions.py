@@ -1,9 +1,11 @@
 import requests
+from netaddr import IPAddress
 from scrapli import Scrapli
 from ..models import DeviceInterfaces
 
 
 def restconf_get_hw_information(host, http_client):
+    hw_data = {}
     try:
         yang_model = 'Cisco-IOS-XE-device-hardware-oper:device-hardware-data'
         data = http_client.get(
@@ -11,7 +13,15 @@ def restconf_get_hw_information(host, http_client):
         )
         if data.status_code == requests.codes.ok:
             hw_info = data.json()['Cisco-IOS-XE-device-hardware-oper:device-hardware-data']
-            return hw_info['device-hardware']['device-inventory']
+            for hw in hw_info['device-hardware']['device-inventory']:
+                if hw['hw-type'] == 'hw-type-chassis':
+                    hw_data['hardware_model'] = hw['part-number']
+                    hw_data['serial'] = hw['serial-number']
+            sw_info = hw_info['device-hardware']['device-system-data']
+            ios_type = sw_info['rommon-version'].replace('ROMMON', '')
+            release_version = sw_info['software-version'].split()[1]
+            hw_data['software_version'] = ios_type + ' ' + release_version
+        return hw_data
     except Exception as error:
         return {'status': 'error', 'message': str(error)}
 
@@ -38,7 +48,7 @@ def restconf_get_interfaces(host, http_client):
                     description=interface['description'],
                     interface_type=interface['interface-type'],
                     ipv4_address=interface['ipv4'],
-                    ipv4_subnet_mask=interface['ipv4-subnet-mask'],
+                    ipv4_subnet_mask=IPAddress(interface['ipv4-subnet-mask']).netmask_bits(),
                     admin_status=interface['admin-status'],
                     oper_status=interface['oper-status'],
                     speed=speed,
