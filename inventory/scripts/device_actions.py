@@ -19,7 +19,7 @@ def restconf_get_hw_information(host, http_client):
                     hw_data['serial'] = hw['serial-number']
             sw_info = hw_info['device-hardware']['device-system-data']
             ios_type = sw_info['rommon-version'].replace('ROMMON', '')
-            release_version = sw_info['software-version'].split()[1]
+            release_version = sw_info['software-version'].split()[9]
             hw_data['software_version'] = ios_type + ' ' + release_version
         return hw_data
     except Exception as error:
