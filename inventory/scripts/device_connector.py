@@ -3,7 +3,7 @@ import requests
 import os
 import urllib3
 from scrapli import Scrapli
-from .device_actions import restconf_get_interfaces
+from .device_actions import restconf_get_interfaces, scrapli_get_interfaces
 from .device_actions import restconf_get_hw_information
 from ..models import Device, DeviceInterfaces
 
@@ -88,11 +88,11 @@ def device_get_details_via_ssh(device_id):
         'platform': platform
     }
     try:
+        scrapli_get_interfaces(host, device)
         with Scrapli(**device) as conn:
-            interfaces = conn.send_command('show interfaces')
             version = conn.send_command('show version')
         return {
-            'interfaces': interfaces.textfsm_parse_output(),
+            'interfaces': DeviceInterfaces.objects.filter(device_id=device_id),
             'version': version.textfsm_parse_output(),
         }
     except Exception as error:
