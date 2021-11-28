@@ -18,9 +18,9 @@ def device_detailed_information(request, device_id):
         'card_header': f'Device Detailed Information - {device.hostname} {device.mgmt_ip}',
     }
     if device.rest_conf_enabled:
-        context['data'] = {'restconf': device_get_details_via_rest(device_id)}
+        context['data'] = device_get_details_via_rest(device_id)
     if not device.rest_conf_enabled:
-        context['data'] = {'ssh_cli': device_get_details_via_ssh(device_id)}
+        context['data'] = device_get_details_via_ssh(device_id)
     return render(
         request,
         'inventory/device_detailed_information.html',
