@@ -66,21 +66,6 @@ def device_detailed_information(request, device_id):
     )
 
 
-def device_inventory_force_discovery(request):
-    task = task_run_device_discovery.delay()
-    task_add_to_db = CeleryJobResults(
-        task_id=task.id,
-        task_requested_by=request.user,
-        start_time=timezone.now()
-    )
-    task_add_to_db.save()
-    messages.success(
-        request,
-        f'Creating discovery task: {task.id}'
-    )
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-
-
 def device_inventory_delete(request, device_id):
     device = Device.objects.get(pk=device_id)
     device.delete()
