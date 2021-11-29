@@ -17,5 +17,6 @@
 *.gz
 *.ini
 *.yaml
+*.sqlite3
 __pycache__/
 migrations/

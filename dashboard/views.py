@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from inventory.models import Device
+from inventory.models import Device, DeviceInterfaces
 
 
 def device_graphing_data():
@@ -30,7 +30,12 @@ def device_graphing_data():
     for device in Device.objects.all():
         hw_models.append(device.vendor + ' ' + device.hardware_model)
         data['inventory_chart']['rows'].append(
-                {'c': [{'v': device.hostname}, {'v': 1}]}
+                {
+                    'c': [
+                        {'v': device.hostname},
+                        {'v': device.id, 'f': f'Device ID: {device.id}'}
+                    ]
+                }
         )
     unique_models = list(set(hw_models))
     for model in unique_models:
