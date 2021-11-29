@@ -76,6 +76,11 @@
         function spinner_toggle_off() {
             document.getElementById("overlay").style.display = "none";
         };
+        $(document).ready(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip({
+                'placement': 'top'
+            });
+        });
     </script>
     <!-- End of Spinner -->
     <!-- Page Loaded JS -->

@@ -31,19 +31,23 @@
                 <td>{{ device.serial_number }}</td>
                 {% if device.rest_conf_enabled %}
                 <td>
-                    <kbd class="bg-success">RESTCONF</kbd>
+                    <badge class="badge bg-success" style="width:100px">
+                        <i class="fas fa-terminal"></i> RESTCONF
+                    </badge>
                 </td>
                 {% else %}
                 <td>
-                    <kbd class="bg-secondary">SSH</kbd>
+                    <badge class="badge bg-secondary" style="width:100px">
+                        <i class="fas fa-terminal"></i> SSH
+                    </badge>
                 </td>
                 {% endif %}
                 <td>{{ device.date_added }}</td>
                 <td>
-                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_edit' device.id %}">
+                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_edit' device.id %}" data-bs-toggle="tooltip" title="Edit">
                         <i class="fas fa-edit text-info"></i>
                     </a>
-                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_delete' device.id %}">
+                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_delete' device.id %}" data-bs-toggle="tooltip" title="Delete">
                         <i class="fas fa-trash-alt text-danger"></i>
                     </a>
                 </td>

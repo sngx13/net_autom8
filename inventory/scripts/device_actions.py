@@ -76,7 +76,7 @@ def restconf_get_hw_information(host, http_client):
             ).replace(microsecond=0)
             device_uptime = device_current_time - device_boot_time
             ios_type = sw_data['rommon-version'].replace('ROMMON', '')
-            release_version = sw_data['software-version'].split()[9]
+            release_version = sw_data['software-version'].split(',')[2].replace('Version', '')
             system_data['software_version'] = ios_type + ' ' + release_version
             system_data['uptime'] = str(device_uptime)
             system_data['reload_reason'] = sw_data['last-reboot-reason']
