@@ -11,6 +11,7 @@
                 <th><i class="fas fa-sitemap"></i> Model</th>
                 <th><i class="fas fa-code-branch"></i> Software</th>
                 <th><i class="fas fa-barcode"></i> Serial Number</th>
+                <th><i class="fas fa-keyboard"></i> Mgmt</th>
                 <th><i class="fas fa-calendar-day"></i> Date Added</th>
                 <th></th>
             </tr>
@@ -28,6 +29,15 @@
                 <td>{{ device.hardware_model }}</td>
                 <td>{{ device.software_version }}</td>
                 <td>{{ device.serial_number }}</td>
+                {% if device.rest_conf_enabled %}
+                <td>
+                    <kbd class="bg-success">RESTCONF</kbd>
+                </td>
+                {% else %}
+                <td>
+                    <kbd class="bg-secondary">SSH</kbd>
+                </td>
+                {% endif %}
                 <td>{{ device.date_added }}</td>
                 <td>
                     <a class="text-decoration-none" href="{% url 'inventory:device_inventory_edit' device.id %}">

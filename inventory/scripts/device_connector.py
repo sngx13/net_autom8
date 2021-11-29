@@ -3,9 +3,13 @@ import requests
 import os
 import urllib3
 from scrapli import Scrapli
-from .device_actions import restconf_get_interfaces, scrapli_get_interfaces
-from .device_actions import restconf_get_hw_information
+# Models
 from ..models import Device, DeviceInterfaces
+# Scripts
+from .device_actions import restconf_get_interfaces
+from .device_actions import scrapli_get_interfaces
+from .device_actions import restconf_get_hw_information
+from .device_actions import scrapli_get_hw_information
 
 
 urllib3.disable_warnings()
@@ -13,7 +17,8 @@ urllib3.disable_warnings()
 project_dir = os.getcwd()
 auth_config = configparser.ConfigParser()
 auth_config.read(
-    f'{project_dir}/inventory/authentication/device_credentials.ini')
+    f'{project_dir}/inventory/authentication/device_credentials.ini'
+)
 
 
 def device_run_discovery():
@@ -41,22 +46,24 @@ def device_run_discovery():
                         progress.append(
                             f'[+] Discovering: {host.hostname}@{host.mgmt_ip}'
                         )
-                        version = conn.send_command('show version')
-                        check_restconf_enabled = conn.send_command('show run | include restconf')
-                        if check_restconf_enabled.result:
+                        version_cmd = conn.send_command('show version')
+                        restconf_cmd = 'show running | include restconf'
+                        check_restconf_en = conn.send_command(restconf_cmd)
+                        if check_restconf_en.result:
                             host.rest_conf_enabled = True
-                        if not check_restconf_enabled.result:
+                        if not check_restconf_en.result:
                             host.rest_conf_enabled = False
-                        output = version.textfsm_parse_output()
+                        output = version_cmd.textfsm_parse_output()
                         for i in output:
-                            host.software_version = i['rommon'] + ' ' + i['version']
+                            sw_version = i['rommon'] + ' ' + i['version']
+                            host.software_version = sw_version
                             host.serial_number = i['serial'][0]
                             host.hardware_model = i['hardware'][0]
                             host.save()
                             progress.append(
-                                f'[+] Updating db entry for: {host.hostname}'
-                                + f' with S/N: {host.serial_number}'
-                                + f' & Model: {host.hardware_model}'
+                                f'[+] Updating DB entry for: {host.hostname}'
+                                + f' S/N: {host.serial_number}'
+                                + f' & HW: {host.hardware_model}'
                             )
                 except Exception as error:
                     return {'status': 'error', 'message': str(error)}
@@ -89,11 +96,9 @@ def device_get_details_via_ssh(device_id):
     }
     try:
         scrapli_get_interfaces(host, device)
-        with Scrapli(**device) as conn:
-            version = conn.send_command('show version')
         return {
             'interfaces': DeviceInterfaces.objects.filter(device_id=device_id),
-            'version': version.textfsm_parse_output(),
+            'version': scrapli_get_hw_information(host, device),
         }
     except Exception as error:
         return {'status': 'error', 'message': str(error)}
@@ -114,8 +119,10 @@ def device_get_details_via_rest(device_id):
             http_client.verify = False
             restconf_get_interfaces(host, http_client)
             return {
-                'interfaces': DeviceInterfaces.objects.filter(device_id=device_id),
+                'interfaces': DeviceInterfaces.objects.filter(
+                    device_id=device_id
+                ),
                 'version': restconf_get_hw_information(host, http_client)
             }
     except Exception as error:
-        return str(error)
+        return {'status': 'error', 'message': str(error)}
