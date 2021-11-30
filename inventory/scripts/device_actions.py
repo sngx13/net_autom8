@@ -32,17 +32,34 @@ def scrapli_get_interfaces(host, device):
                 subnet_mask = interface['ip_address'].split('/')[1]
             if not interface['ip_address']:
                 subnet_mask = 'N/A'
+            if 'ARPA' in interface['encapsulation'] or '802.1Q' in interface['encapsulation']:
+                interface_type = 'ethernet'
+                speed = interface['speed']
+                duplex = interface['duplex'].replace('Duplex', '')
+            elif interface['encapsulation'] != 'ARPA':
+                interface_type = interface['encapsulation'].lower()
+                speed = 'N/A'
+                duplex = 'N/A'
+            if interface['link_status'] == 'administratively down':
+                oper_status = 'down'
+                admin_status = 'down'
+            if interface['link_status'] and interface['protocol_status'] == 'up':
+                oper_status = 'up'
+                admin_status = 'up'
+            elif interface['link_status'] and interface['protocol_status'] == 'down':
+                oper_status = 'down'
+                admin_status = 'up'
             interfaces_obj = DeviceInterfaces(
                 device_id=host,
                 name=interface['interface'],
                 description=interface['description'],
-                interface_type=interface['encapsulation'],
+                interface_type=interface_type,
                 ipv4_address=interface['ip_address'],
                 ipv4_subnet_mask=subnet_mask,
-                admin_status='N/A',
-                oper_status=interface['protocol_status'],
-                speed=interface['speed'],
-                duplex=interface['duplex'].replace('Duplex', ''),
+                admin_status=admin_status,
+                oper_status=oper_status,
+                speed=speed,
+                duplex=duplex,
                 mtu=interface['mtu'],
                 phys_address=interface['bia'],
                 in_crc_errors=interface['crc']
@@ -98,20 +115,36 @@ def restconf_get_interfaces(host, http_client):
                 if 'csmacd' in interface['interface-type']:
                     speed = interface['ether-state']['negotiated-port-speed'].replace('speed-', '')
                     duplex = interface['ether-state']['negotiated-duplex-mode'].replace('-duplex', '')
+                    interface_type = 'ethernet'
                 elif 'loopback' in interface['interface-type']:
                     speed = 'N/A'
                     duplex = 'N/A'
+                    interface_type = 'loopback'
+                elif 'tunnel' in interface['interface-type']:
+                    speed = 'N/A'
+                    duplex = 'N/A'
+                    interface_type = 'tunnel'
+                if 'if-state-up' in interface['admin-status']:
+                    admin_status = 'up'
+                elif 'if-state-down' in interface['admin-status']:
+                    admin_status = 'down'
+                if 'if-oper-state-ready' in interface['oper-status']:
+                    oper_status = 'up'
+                elif 'if-oper-state-no-pass' in interface['oper-status']:
+                    oper_status = 'down'
+                elif 'if-oper-state-lower-layer-down' in interface['oper-status']:
+                    oper_status = 'down'
                 interfaces_obj = DeviceInterfaces(
                     device_id=host,
                     name=interface['name'],
                     description=interface['description'],
-                    interface_type=interface['interface-type'],
+                    interface_type=interface_type,
                     ipv4_address=interface['ipv4'],
                     ipv4_subnet_mask=IPAddress(
                         interface['ipv4-subnet-mask']
                     ).netmask_bits(),
-                    admin_status=interface['admin-status'],
-                    oper_status=interface['oper-status'],
+                    admin_status=admin_status,
+                    oper_status=oper_status,
                     speed=speed,
                     duplex=duplex,
                     mtu=interface['mtu'],

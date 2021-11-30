@@ -9,6 +9,7 @@ from django.utils import timezone
 from random import randint
 # Tasks
 from .tasks import task_run_device_discovery
+from .tasks import task_run_device_rediscovery
 # Models
 from .models import Device
 from housekeeping.models import CeleryJobResults
@@ -64,6 +65,21 @@ def device_detailed_information(request, device_id):
         'inventory/device_detailed_information.html',
         context
     )
+
+
+def device_force_rediscovery(request, device_id):
+    device = Device.objects.get(pk=device_id)
+    task = task_run_device_rediscovery.delay(device_id)
+    task_add_to_db = CeleryJobResults(
+        task_id=task.id,
+        task_requested_by=request.user,
+        start_time=timezone.now()
+    )
+    task_add_to_db.save()
+    messages.success(
+        request,
+        f'Rediscovery task added for {device.hostname}: {task.id}')
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def device_inventory_delete(request, device_id):

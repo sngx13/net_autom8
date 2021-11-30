@@ -21,10 +21,9 @@ auth_config.read(
 )
 
 
-def device_run_discovery():
+def bulk_device_discovery(hosts):
     progress = []
-    devices = Device.objects.all()
-    for host in devices:
+    for host in hosts:
         if 'Cisco' in host.vendor:
             platform = 'cisco_iosxe'
             if host.username and host.password:
@@ -54,27 +53,89 @@ def device_run_discovery():
                         if not check_restconf_en.result:
                             host.rest_conf_enabled = False
                         output = version_cmd.textfsm_parse_output()
-                        for i in output:
-                            sw_version = i['rommon'] + ' ' + i['version']
-                            host.software_version = sw_version
-                            host.serial_number = i['serial'][0]
-                            host.hardware_model = i['hardware'][0]
-                            host.save()
-                            progress.append(
-                                f'[+] Updating DB entry for: {host.hostname}'
-                                + f' S/N: {host.serial_number}'
-                                + f' & HW: {host.hardware_model}'
-                            )
+                        if output:
+                            for i in output:
+                                sw_version = i['rommon'] + ' ' + i['version']
+                                host.software_version = sw_version
+                                host.serial_number = i['serial'][0]
+                                host.hardware_model = i['hardware'][0]
+                                host.save()
+                                progress.append(
+                                    f'[+] Updating DB entry for: {host.hostname}'
+                                    + f' S/N: {host.serial_number}'
+                                    + f' & HW: {host.hardware_model}'
+                                )
                 except Exception as error:
+                    progress.append({'status': 'error', 'message': str(error)})
                     return {'status': 'error', 'message': str(error)}
+    return progress
+
+
+def single_device_discovery(host):
+    progress = []
+    if 'Cisco' in host.vendor:
+        platform = 'cisco_iosxe'
+        if host.username and host.password:
+            username = host.username
+            password = host.password
         else:
-            # For future use
-            pass
-    return {
-        'status': 'success',
-        'message': 'Discovery task completed successfully!',
-        'details': progress
-    }
+            username = auth_config['cli_logins']['username']
+            password = auth_config['cli_logins']['password']
+        device = {
+                    'host': host.mgmt_ip,
+                    'auth_username': username,
+                    'auth_password': password,
+                    'auth_strict_key': False,
+                    'platform': platform
+                }
+        try:
+            with Scrapli(**device) as conn:
+                progress.append(
+                    f'[+] Discovering: {host.hostname}@{host.mgmt_ip}'
+                )
+                version_cmd = conn.send_command('show version')
+                restconf_cmd = 'show running | include restconf'
+                check_restconf_en = conn.send_command(restconf_cmd)
+                if check_restconf_en.result:
+                    host.rest_conf_enabled = True
+                if not check_restconf_en.result:
+                    host.rest_conf_enabled = False
+                output = version_cmd.textfsm_parse_output()
+                if output:
+                    for i in output:
+                        sw_version = i['rommon'] + ' ' + i['version']
+                        host.software_version = sw_version
+                        host.serial_number = i['serial'][0]
+                        host.hardware_model = i['hardware'][0]
+                        host.save()
+                        progress.append(
+                            f'[+] Updating DB entry for: {host.hostname}'
+                            + f' S/N: {host.serial_number}'
+                            + f' & HW: {host.hardware_model}'
+                        )
+        except Exception as error:
+            progress.append({'status': 'error', 'message': str(error)})
+            return {'status': 'error', 'message': str(error)}
+    return progress
+
+
+def device_run_discovery(device_id=None):
+    if device_id:
+        host = Device.objects.get(pk=device_id)
+        discovery_progress = single_device_discovery(host)
+        return {
+            'status': 'success',
+            'message': 'Rediscovery task completed successfully!',
+            'details': discovery_progress
+        }
+    else:
+        hosts = Device.objects.all()
+        discovery_progress = bulk_device_discovery(hosts)
+        return {
+            'status': 'success',
+            'message': 'Discovery task completed successfully!',
+            'details': discovery_progress
+        }
 
 
 def device_get_details_via_ssh(device_id):

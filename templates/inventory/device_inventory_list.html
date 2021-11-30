@@ -44,6 +44,9 @@
                 {% endif %}
                 <td>{{ device.date_added }}</td>
                 <td>
+                    <a class="text-decoration-none" href="{% url 'inventory:device_force_rediscovery' device.id %}" data-bs-toggle="tooltip" title="Rediscover">
+                        <i class="fas fa-sync-alt"></i>
+                    </a>
                     <a class="text-decoration-none" href="{% url 'inventory:device_inventory_edit' device.id %}" data-bs-toggle="tooltip" title="Edit">
                         <i class="fas fa-edit text-info"></i>
                     </a>
