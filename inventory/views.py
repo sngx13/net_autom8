@@ -95,6 +95,8 @@ def device_inventory_create(request):
                 add_device = Device(
                     hostname=request.POST['hostname'],
                     mgmt_ip=request.POST['mgmt_ip'],
+                    username=request.POST['username'],
+                    password=request.POST['password'],
                     vendor=request.POST['vendor'],
                     date_added=timezone.now()
                 )
