@@ -1,7 +1,10 @@
+# Django
 from django.shortcuts import render
+# Models
+from .models import CeleryJobResults
+# Celery
 from celery import current_app
 from celery.utils.nodenames import gethostname
-from .models import CeleryJobResults
 
 
 def housekeeping_celery_tasks(request):

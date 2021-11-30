@@ -1,4 +1,6 @@
+# Django
 from django.shortcuts import render
+# Models
 from inventory.models import Device, DeviceInterfaces
 
 

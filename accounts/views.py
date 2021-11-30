@@ -1,6 +1,8 @@
+# Django
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.contrib import messages
+# Forms
 from .forms import SignUpForm
 
 
