@@ -6,10 +6,10 @@ from scrapli import Scrapli
 # Models
 from ..models import Device, DeviceInterfaces
 # Scripts
-from .device_actions import restconf_get_interfaces
-from .device_actions import scrapli_get_interfaces
-from .device_actions import restconf_get_hw_information
-from .device_actions import scrapli_get_hw_information
+from .device_actions_restconf import restconf_get_hw_information
+from .device_actions_restconf import restconf_get_interfaces
+from .device_actions_scrapli import scrapli_get_interfaces
+from .device_actions_scrapli import scrapli_get_hw_information
 
 
 urllib3.disable_warnings()
@@ -160,8 +160,10 @@ def device_get_details_via_ssh(device_id):
     try:
         scrapli_get_interfaces(host, device)
         return {
-            'interfaces': DeviceInterfaces.objects.filter(device_id=device_id),
-            'version': scrapli_get_hw_information(host, device),
+            'interfaces': DeviceInterfaces.objects.filter(
+                device_id=device_id
+            ),
+            'version': scrapli_get_hw_information(host, device)
         }
     except Exception as error:
         return {'status': 'error', 'message': str(error)}
