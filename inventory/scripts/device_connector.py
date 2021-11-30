@@ -66,9 +66,8 @@ def bulk_device_discovery(hosts):
                                     + f' & HW: {host.hardware_model}'
                                 )
                 except Exception as error:
-                    progress.append({'status': 'error', 'message': str(error)})
                     return {'status': 'error', 'message': str(error)}
-    return progress
+    return {'status': 'success', 'details': progress}
 
 
 def single_device_discovery(host):
@@ -113,29 +112,32 @@ def single_device_discovery(host):
                             + f' S/N: {host.serial_number}'
                             + f' & HW: {host.hardware_model}'
                         )
+                    return {'status': 'success', 'details': progress}
         except Exception as error:
-            progress.append({'status': 'error', 'message': str(error)})
             return {'status': 'error', 'message': str(error)}
-    return progress
 
 
-def device_run_discovery(device_id=None):
+def device_initiate_discovery(device_id=None):
     if device_id:
         host = Device.objects.get(pk=device_id)
         discovery_progress = single_device_discovery(host)
-        return {
-            'status': 'success',
-            'message': 'Rediscovery task completed successfully!',
-            'details': discovery_progress
-        }
+        if discovery_progress['status'] == 'success':
+            discovery_progress.update(
+                {'message': 'Rediscovery task completed successfully!'}
+            )
+            return discovery_progress
+        else:
+            return discovery_progress
     else:
         hosts = Device.objects.all()
         discovery_progress = bulk_device_discovery(hosts)
-        return {
-            'status': 'success',
-            'message': 'Discovery task completed successfully!',
-            'details': discovery_progress
-        }
+        if discovery_progress['status'] == 'success':
+            discovery_progress.update(
+                {'message': 'Rediscovery task completed successfully!'}
+            )
+            return discovery_progress
+        else:
+            return discovery_progress
 
 
 def device_get_details_via_ssh(device_id):
