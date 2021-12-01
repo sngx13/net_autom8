@@ -20,12 +20,12 @@ def restconf_get_hw_information(host, http_client):
                     system_data['serial'] = hw['serial-number']
             sw_data = device_data['device-hardware']['device-system-data']
             device_current_time = datetime.strptime(
-                sw_data['current-time'],
-                '%Y-%m-%dT%H:%M:%S.%f+00:00'
+                sw_data['current-time'][0:19],
+                '%Y-%m-%dT%H:%M:%S'
             ).replace(microsecond=0)
             device_boot_time = datetime.strptime(
-                sw_data['boot-time'],
-                '%Y-%m-%dT%H:%M:%S+00:00'
+                sw_data['boot-time'][0:19],
+                '%Y-%m-%dT%H:%M:%S'
             ).replace(microsecond=0)
             device_uptime = device_current_time - device_boot_time
             ios_type = sw_data['rommon-version'].replace('ROMMON', '')
@@ -48,6 +48,7 @@ def restconf_get_interfaces(host, http_client):
         if data.status_code == requests.codes.ok:
             interface_data = data.json()['Cisco-IOS-XE-interfaces-oper:interface']
             for interface in interface_data:
+                # Interface type e.g: Ethernet/Loopback/Tunnel
                 if 'csmacd' in interface['interface-type']:
                     speed = interface['ether-state']['negotiated-port-speed'].replace('speed-', '')
                     duplex = interface['ether-state']['negotiated-duplex-mode'].replace('-duplex', '')
@@ -60,32 +61,47 @@ def restconf_get_interfaces(host, http_client):
                     speed = 'N/A'
                     duplex = 'N/A'
                     interface_type = 'tunnel'
+                else:
+                    speed = 'N/A'
+                    duplex = 'N/A'
+                    interface_type = 'other'
+                # Admin status
                 if 'if-state-up' in interface['admin-status']:
                     admin_status = 'up'
                 elif 'if-state-down' in interface['admin-status']:
                     admin_status = 'down'
-                if 'if-oper-state-ready' in interface['oper-status']:
+                else:
+                    admin_status = 'unknown'
+                # Operational status
+                if 'ready' in interface['oper-status']:
                     oper_status = 'up'
-                elif 'if-oper-state-no-pass' in interface['oper-status']:
+                elif 'no-pass' in interface['oper-status']:
                     oper_status = 'down'
-                elif 'if-oper-state-lower-layer-down' in interface['oper-status']:
+                elif 'lower-layer-down' in interface['oper-status']:
                     oper_status = 'down'
+                else:
+                    oper_status = 'unknown'
+                try:
+                    ipv4_address = interface['ipv4']
+                    ipv4_subnet_mask = IPAddress(
+                        interface['ipv4-subnet-mask']
+                    ).netmask_bits()
+                except KeyError:
+                    ipv4_address = 'N/A'
+                    ipv4_subnet_mask = 'N/A'
                 interfaces_obj = DeviceInterfaces(
                     device_id=host,
                     name=interface['name'],
                     description=interface['description'],
                     interface_type=interface_type,
-                    ipv4_address=interface['ipv4'],
-                    ipv4_subnet_mask=IPAddress(
-                        interface['ipv4-subnet-mask']
-                    ).netmask_bits(),
+                    ipv4_address=ipv4_address,
+                    ipv4_subnet_mask=ipv4_subnet_mask,
                     admin_status=admin_status,
                     oper_status=oper_status,
                     speed=speed,
                     duplex=duplex,
                     mtu=interface['mtu'],
-                    phys_address=interface['phys-address'],
-                    in_crc_errors=interface['statistics']['in-crc-errors']
+                    phys_address=interface['phys-address']
                 )
                 interfaces_obj.save()
     except Exception as error:

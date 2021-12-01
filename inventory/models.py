@@ -28,4 +28,3 @@ class DeviceInterfaces(models.Model):
     oper_status = models.CharField(blank=True, null=True, max_length=255)
     phys_address = models.CharField(blank=True, null=True, max_length=255)
     mtu = models.CharField(blank=True, null=True, max_length=5)
-    in_crc_errors = models.CharField(blank=True, null=True, max_length=255)

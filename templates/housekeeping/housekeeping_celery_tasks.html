@@ -67,7 +67,20 @@
                                     <h5 class="modal-title">Task Result - Information</h5>
                                   </div>
                                   <div class="modal-body">
-                                    <pre>{{ completed_task.task_result }}</pre>
+                                    <ul>
+                                        <li>
+                                            Result:
+                                            <span class="badge bg-primary">{{ completed_task.task_result.status|upper }}</span>
+                                        </li>
+                                        <li>
+                                            Details:
+                                            <ul>
+                                                {% for detail in completed_task.task_result.details %}
+                                                    <li>{{ detail }}</li>
+                                                {% endfor %}
+                                            </ul>
+                                        </li>
+                                    </ul>
                                   </div>
                                   <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

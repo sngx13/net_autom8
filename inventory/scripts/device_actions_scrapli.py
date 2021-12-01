@@ -58,8 +58,7 @@ def scrapli_get_interfaces(host, device):
                 speed=speed,
                 duplex=duplex,
                 mtu=interface['mtu'],
-                phys_address=interface['bia'],
-                in_crc_errors=interface['crc']
+                phys_address=interface['bia']
             )
             interfaces_obj.save()
     except Exception as error:

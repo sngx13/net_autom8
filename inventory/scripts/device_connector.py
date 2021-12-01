@@ -38,7 +38,8 @@ def bulk_device_discovery(hosts):
                     'auth_username': username,
                     'auth_password': password,
                     'auth_strict_key': False,
-                    'platform': platform
+                    'platform': platform,
+                    'ssh_config_file': '/etc/ssh/ssh_config'
                 }
                 try:
                     with Scrapli(**device) as conn:
@@ -85,7 +86,8 @@ def single_device_discovery(host):
                     'auth_username': username,
                     'auth_password': password,
                     'auth_strict_key': False,
-                    'platform': platform
+                    'platform': platform,
+                    'ssh_config_file': '/etc/ssh/ssh_config'
                 }
         try:
             with Scrapli(**device) as conn:
@@ -155,7 +157,8 @@ def device_get_details_via_ssh(device_id):
         'auth_username': username,
         'auth_password': password,
         'auth_strict_key': False,
-        'platform': platform
+        'platform': platform,
+        'ssh_config_file': '/etc/ssh/ssh_config'
     }
     try:
         scrapli_get_interfaces(host, device)
