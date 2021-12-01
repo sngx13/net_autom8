@@ -24,7 +24,11 @@
         <li>
             <i class="fas fa-hammer"></i> Active Tasks:
             {% for task in data.celery_information.active_tasks %}
-                <ul><li>{{ task }}</li></ul>
+                <ul>
+                    <li>Task ID: {{ task.id }}</li>
+                    <li>Task Name: {{ task.name }}</li>
+                    <li>Worker PID: {{ task.worker_pid }}</li>
+                </ul>
             {% endfor %}
         </li>
     </ul>
@@ -70,7 +74,11 @@
                                     <ul>
                                         <li>
                                             Result:
-                                            <span class="badge bg-primary">{{ completed_task.task_result.status|upper }}</span>
+                                            {% if 'success' in completed_task.task_result.status %}
+                                                <span class="badge bg-success">{{ completed_task.task_result.status|upper }}</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">{{ completed_task.task_result.status|upper }}</span>
+                                            {% endif %}
                                         </li>
                                         <li>
                                             Details:
