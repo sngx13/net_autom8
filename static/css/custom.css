@@ -13,11 +13,14 @@ body {
   font-weight: 400;
   font-size: 14px;
   overflow-y: scroll;
-  min-height: 75rem;
+  min-height: 70rem;
   padding-top: 5rem;
   height: 100%;
+  background: linear-gradient(to top, #e6e6e6, #4b4b4b, #656565)
 }
 .card {
+    transition: 0.3s;
+    margin: 0.5rem;
     position: relative;
     box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
 }
@@ -25,11 +28,13 @@ body {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     font-size: 16px;
+    background-color: #e6e6e6;
 }
 .card-footer {
     font-family: 'Roboto', sans-serif;
     font-weight: 500;
     font-size: 16px;
+    background-color: #e6e6e6;
 }
 th {
     font-family: 'Roboto', sans-serif;

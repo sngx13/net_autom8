@@ -1,9 +1,9 @@
+{% load static %}
 {% if user.is_authenticated %}
 <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top border-bottom border-secondary shadow">
   <div class="container-fluid">
     <a class="navbar-brand" href="#">
-      <i class="fas fa-robot" style="font-size: 24px;"></i>
-      {AUTOM8}
+      <img class="rounded" src="{% static 'images/logos/portal_logo.png' %}" width="115" height="40">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
       aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
