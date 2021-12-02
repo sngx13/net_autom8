@@ -18,5 +18,6 @@
 *.ini
 *.yaml
 *.sqlite3
+*.csv
 __pycache__/
 migrations/
