@@ -16,6 +16,8 @@ common_intfs = [
     'Tunnel',
     'Loopback'
 ]
+# Task progress
+progress = []
 
 
 def restconf_get_hw_information(host, http_client):
@@ -57,6 +59,9 @@ def restconf_get_interfaces(host, http_client):
         yang_model = 'Cisco-IOS-XE-interfaces-oper:interfaces'
         data = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_model}'
+        )
+        progress.append(
+            f'[+] Connecting to {host.hostname}, using YANG: {yang_model}'
         )
         if data.status_code == requests.codes.ok:
             interface_data = data.json()[yang_model]
@@ -111,5 +116,13 @@ def restconf_get_interfaces(host, http_client):
                         phys_address=interface['phys-address']
                     )
                     interfaces_obj.save()
+                    progress.append(
+                        f'[+] DB entry {interfaces_obj.id} created for: ' +
+                        interface['name']
+                    )
+            return {
+                'status': 'success',
+                'details': progress
+            }
     except Exception as error:
         return {'status': 'error', 'message': str(error)}
