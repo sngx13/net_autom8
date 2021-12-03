@@ -12,7 +12,7 @@ from .tasks import task_run_device_discovery
 from .tasks import task_run_device_rediscovery
 # Models
 from .models import Device, DeviceInterfaces
-from housekeeping.models import CeleryJobResults
+from housekeeping.models import CeleryUserJobResults
 # Forms
 from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm
 
@@ -67,7 +67,7 @@ def device_detailed_information(request, device_id):
 def device_force_rediscovery(request, device_id):
     device = Device.objects.get(pk=device_id)
     task = task_run_device_rediscovery.delay(device_id)
-    task_add_to_db = CeleryJobResults(
+    task_add_to_db = CeleryUserJobResults(
         task_id=task.id,
         task_requested_by=request.user,
         start_time=timezone.now()
@@ -115,7 +115,7 @@ def device_inventory_create(request):
                 )
                 add_device.save()
                 task = task_run_device_discovery.delay()
-                task_add_to_db = CeleryJobResults(
+                task_add_to_db = CeleryUserJobResults(
                     task_id=task.id,
                     task_requested_by=request.user,
                     start_time=timezone.now()
@@ -154,7 +154,7 @@ def device_inventory_import(request):
                 result = inventory_importer(request.FILES['file'])
                 if result['status'] == 'success':
                     task = task_run_device_discovery.delay()
-                    task_add_to_db = CeleryJobResults(
+                    task_add_to_db = CeleryUserJobResults(
                         task_id=task.id,
                         task_requested_by=request.user,
                         start_time=timezone.now()

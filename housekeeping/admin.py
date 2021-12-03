@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CeleryJobResults
+from .models import CeleryUserJobResults, CeleryBackendJobResults
 
 
-admin.site.register(CeleryJobResults)
+admin.site.register([CeleryUserJobResults, CeleryBackendJobResults])
