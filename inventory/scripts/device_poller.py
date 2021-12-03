@@ -189,4 +189,6 @@ def device_initiate_poller():
                 'message': 'Polling task completed successfully'
             }
         )
-    return poller_result
+        return poller_result
+    else:
+        return {'status': 'failed', 'details': 'No devices in the database'}
