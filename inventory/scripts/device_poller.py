@@ -154,6 +154,7 @@ def rest_interface_info(host, http_client):
 
 
 def device_initiate_poller():
+    poller_progress.clear()
     poller_result = {}
     if Device.objects.all():
         hosts = Device.objects.all()
