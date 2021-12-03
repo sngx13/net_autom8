@@ -54,7 +54,7 @@
                     <td>{{ completed_task.task_id }}</td>
                     <td>{{ completed_task.task_name }}</td>
                     <td>
-                        {% if 'COMPLETED' in completed_task.task_status %}
+                        {% if 'SUCCESS' in completed_task.task_status %}
                             <span class="badge bg-success">{{ completed_task.task_status }}</span>
                         {% else %}
                             <span class="badge bg-danger">{{ completed_task.task_status }}</span>

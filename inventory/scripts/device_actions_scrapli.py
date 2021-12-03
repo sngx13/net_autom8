@@ -16,7 +16,7 @@ def scrapli_get_hw_information(host, device):
                 system_data['reload_reason'] = hw['reload_reason']
             return system_data
     except Exception as error:
-        return {'status': 'error', 'message': str(error)}
+        return {'status': 'error', 'details': str(error)}
 
 
 def scrapli_get_interfaces(host, device):
@@ -62,4 +62,4 @@ def scrapli_get_interfaces(host, device):
             )
             interfaces_obj.save()
     except Exception as error:
-        return {'status': 'error', 'message': str(error)}
+        return {'status': 'error', 'details': str(error)}

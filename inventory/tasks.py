@@ -1,11 +1,12 @@
 # Django
 from django.utils import timezone
 # Celery
-from celery import shared_task
+from celery import shared_task, states
 from celery.result import AsyncResult
 # Scrips
 from .scripts.device_connector import device_initiate_discovery
 from .scripts.device_connector import device_interface_poll
+from .scripts.device_actions_restconf import clear_task_progress
 # Models
 from housekeeping.models import CeleryJobResults
 from .models import Device
@@ -18,12 +19,12 @@ def task_run_device_discovery(self):
     task_update_db.task_name = self.name
     task_result = AsyncResult(self.request.id)
     if task_status['status'] == 'success':
-        self.update_state(state='COMPLETED', meta=task_status)
+        self.update_state(state=states.SUCCESS, meta=task_status)
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
     else:
-        self.update_state(state='FAILED', meta=task_status)
+        self.update_state(state=states.FAILURE, meta=task_status)
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
@@ -37,12 +38,12 @@ def task_run_device_rediscovery(self, device_id):
     task_update_db.task_name = self.name
     task_result = AsyncResult(self.request.id)
     if task_status['status'] == 'success':
-        self.update_state(state='COMPLETED', meta=task_status)
+        self.update_state(state=states.SUCCESS, meta=task_status)
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
     else:
-        self.update_state(state='FAILED', meta=task_status)
+        self.update_state(state=states.FAILURE, meta=task_status)
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
@@ -55,7 +56,7 @@ def task_periodic_poll_interfaces(self):
         task_status = device_interface_poll(device.id)
     task_add_to_db = CeleryJobResults(
                 task_id=self.request.id,
-                task_requested_by='poll_interfaces',
+                task_requested_by='periodic_poll_interfaces_script',
                 start_time=timezone.now()
     )
     task_add_to_db.save()
@@ -63,13 +64,14 @@ def task_periodic_poll_interfaces(self):
     task_update_db.task_name = self.name
     task_result = AsyncResult(self.request.id)
     if task_status['status'] == 'success':
-        self.update_state(state='COMPLETED', meta=task_status)
+        self.update_state(state=states.SUCCESS, meta=task_status)
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
     else:
-        self.update_state(state='FAILED', meta=task_status)
+        self.update_state(state=states.FAILURE, meta=task_status)
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
+    clear_task_progress()
     return task_status

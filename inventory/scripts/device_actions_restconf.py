@@ -20,6 +20,10 @@ common_intfs = [
 progress = []
 
 
+def clear_task_progress():
+    progress.clear()
+
+
 def restconf_get_hw_information(host, http_client):
     system_data = {}
     try:
@@ -50,7 +54,7 @@ def restconf_get_hw_information(host, http_client):
             system_data['reload_reason'] = sw_data['last-reboot-reason']
         return system_data
     except Exception as error:
-        return {'status': 'error', 'message': str(error)}
+        return {'status': 'error', 'details': str(error)}
 
 
 def restconf_get_interfaces(host, http_client):
@@ -120,9 +124,6 @@ def restconf_get_interfaces(host, http_client):
                         f'[+] DB entry {interfaces_obj.id} created for: ' +
                         interface['name']
                     )
-            return {
-                'status': 'success',
-                'details': progress
-            }
+            return {'status': 'success', 'details': progress}
     except Exception as error:
-        return {'status': 'error', 'message': str(error)}
+        return {'status': 'error', 'details': str(error)}

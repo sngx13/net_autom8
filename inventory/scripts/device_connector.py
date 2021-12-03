@@ -80,7 +80,7 @@ def bulk_device_discovery(hosts):
                                     f'[+] Device db id: {host.id} serial: {host.serial_number}'
                                 )
                 except Exception as error:
-                    return {'status': 'error', 'message': str(error)}
+                    return {'status': 'error', 'details': str(error)}
     return {'status': 'success', 'details': progress}
 
 
@@ -142,7 +142,7 @@ def single_device_discovery(host):
                         )
                     return {'status': 'success', 'details': progress}
         except Exception as error:
-            return {'status': 'error', 'message': str(error)}
+            return {'status': 'error', 'details': str(error)}
 
 
 def device_initiate_discovery(device_id=None):
@@ -195,7 +195,7 @@ def device_get_details_via_ssh(device_id):
             'version': scrapli_get_hw_information(host, device)
         }
     except Exception as error:
-        return {'status': 'error', 'message': str(error)}
+        return {'status': 'error', 'details': str(error)}
 
 
 def device_get_details_via_rest(device_id):
@@ -219,7 +219,7 @@ def device_get_details_via_rest(device_id):
                 'version': restconf_get_hw_information(host, http_client)
             }
     except Exception as error:
-        return {'status': 'error', 'message': str(error)}
+        return {'status': 'error', 'details': str(error)}
 
 
 def device_interface_poll(device_id):
@@ -237,4 +237,4 @@ def device_interface_poll(device_id):
             http_client.verify = False
             return restconf_get_interfaces(host, http_client)
     except Exception as error:
-        return {'status': 'error', 'message': str(error)}
+        return {'status': 'error', 'details': str(error)}
