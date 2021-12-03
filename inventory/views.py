@@ -11,13 +11,10 @@ from random import randint
 from .tasks import task_run_device_discovery
 from .tasks import task_run_device_rediscovery
 # Models
-from .models import Device
+from .models import Device, DeviceInterfaces
 from housekeeping.models import CeleryJobResults
 # Forms
 from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm
-# Scipts
-from .scripts.device_connector import device_get_details_via_ssh
-from .scripts.device_connector import device_get_details_via_rest
 
 
 def inventory_importer(file):
@@ -55,11 +52,11 @@ def device_detailed_information(request, device_id):
     context = {
         'title': 'Device Detailed Information',
         'card_header': f'Information for: {device.hostname} {device.mgmt_ip}',
+        'data': {
+            'version': device,
+            'interfaces': DeviceInterfaces.objects.filter(device_id=device_id)
+        }
     }
-    if device.rest_conf_enabled:
-        context['data'] = device_get_details_via_rest(device_id)
-    if not device.rest_conf_enabled:
-        context['data'] = device_get_details_via_ssh(device_id)
     return render(
         request,
         'inventory/device_detailed_information.html',

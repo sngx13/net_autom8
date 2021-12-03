@@ -10,8 +10,11 @@ class Device(models.Model):
     software_version = models.CharField(blank=True, null=True, max_length=255)
     serial_number = models.CharField(blank=True, null=True, max_length=255)
     vendor = models.CharField(max_length=255)
+    description = models.CharField(blank=True, null=True, max_length=255)
     hardware_model = models.CharField(blank=True, null=True, max_length=255)
     rest_conf_enabled = models.BooleanField(blank=True, null=True)
+    device_uptime = models.CharField(blank=True, null=True, max_length=255)
+    last_polled = models.DateTimeField(blank=True, null=True)
     date_added = models.DateTimeField(default=timezone.now())
 
 

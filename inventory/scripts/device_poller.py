@@ -1,10 +1,23 @@
+import configparser
+import os
 import re
 import requests
-from netaddr import IPAddress
+import urllib3
 from datetime import datetime
+from django.utils import timezone
+from netaddr import IPAddress
 # Models
 from ..models import Device, DeviceInterfaces
 
+
+# Disable invalid cert warning
+urllib3.disable_warnings()
+# Auth
+project_dir = os.getcwd()
+auth_config = configparser.ConfigParser()
+auth_config.read(
+    f'{project_dir}/inventory/authentication/device_credentials.ini'
+)
 
 # Regex parser for interfaces
 if_parser = re.compile('([a-zA-Z]+)([0-9]+)')
@@ -16,15 +29,10 @@ common_intfs = [
     'Tunnel',
     'Loopback'
 ]
-# Task progress
-progress = []
 
 
-def clear_task_progress():
-    progress.clear()
-
-
-def restconf_get_hw_information(host, http_client):
+def rest_device_info(host, http_client):
+    progress = []
     try:
         yang_model = 'Cisco-IOS-XE-device-hardware-oper:device-hardware-data'
         data = http_client.get(
@@ -33,13 +41,13 @@ def restconf_get_hw_information(host, http_client):
         progress.append(
             f'[+] Connecting to {host.hostname}, using YANG: {yang_model}'
         )
-        device_obj = Device()
         if data.status_code == requests.codes.ok:
             device_data = data.json()[yang_model]
             for hw in device_data['device-hardware']['device-inventory']:
                 if hw['hw-type'] == 'hw-type-chassis':
-                    device_obj.hardware_model = hw['part-number']
-                    device_obj.serial = hw['serial-number']
+                    hardware_model = hw['part-number']
+                    serial_number = hw['serial-number']
+                    description = hw['hw-description']
             sw_data = device_data['device-hardware']['device-system-data']
             device_current_time = datetime.strptime(
                 sw_data['current-time'][0:19],
@@ -52,18 +60,29 @@ def restconf_get_hw_information(host, http_client):
             device_uptime = device_current_time - device_boot_time
             ios_type = sw_data['rommon-version'].replace('ROMMON', '')
             code_version = sw_data['software-version'].split(',')[2]
-            device_obj.software_version = ios_type + ' ' + code_version
-            device_obj.device_uptime = str(device_uptime)
+            software_version = ios_type + ' ' + code_version
+            device_obj = Device.objects.get(pk=host.id)
+            device_obj.hardware_model = hardware_model
+            device_obj.serial_number = serial_number
+            device_obj.description = description
+            device_obj.software_version = software_version
+            device_obj.device_uptime = device_uptime
+            device_obj.last_polled = timezone.now()
             device_obj.save()
             progress.append(
-                f'[+] DB entry {device_obj.id} updated.'
+                f'[+] Updating {host.hostname} {device_obj.id} uptime: {device_uptime}'
             )
+            return {'status': 'success', 'details': progress}
     except Exception as error:
         return {'status': 'error', 'details': str(error)}
 
 
-def restconf_get_interfaces(host, http_client):
+def rest_interface_info(host, http_client):
+    progress = []
     try:
+        progress.append(
+            f'[+] Deleting old interface DB entries for {host.hostname}'
+        )
         DeviceInterfaces.objects.filter(device_id=host.id).delete()
         yang_model = 'Cisco-IOS-XE-interfaces-oper:interfaces'
         data = http_client.get(
@@ -130,5 +149,31 @@ def restconf_get_interfaces(host, http_client):
                         interface['name']
                     )
             return {'status': 'success', 'details': progress}
+    except Exception as error:
+        return {'status': 'error', 'details': str(error)}
+
+
+def device_initiate_poller(device_id):
+    host = Device.objects.get(pk=device_id)
+    if host.username and host.password:
+        username = host.username
+        password = host.password
+    else:
+        username = auth_config['cli_logins']['username']
+        password = auth_config['cli_logins']['password']
+    try:
+        with requests.Session() as http_client:
+            http_client.auth = (username, password)
+            http_client.headers = {'Accept': 'application/yang-data+json'}
+            http_client.verify = False
+            #
+            device_info = rest_device_info(host, http_client)
+            interface_info = rest_interface_info(host, http_client)
+            if device_info['status'] and interface_info['status'] == 'success':
+                return {
+                    'status': 'success',
+                    'message': f'Polling of {host.hostname} completed successfully!',
+                    'details': device_info['details'] + interface_info['details']
+                }
     except Exception as error:
         return {'status': 'error', 'details': str(error)}
