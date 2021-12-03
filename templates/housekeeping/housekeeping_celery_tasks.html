@@ -61,10 +61,10 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#task_result_modal">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#task_result_modal_{{ completed_task.task_id }}">
                             <i class="fas fa-info-circle"></i>
                         </a>
-                        <div class="modal fade" id="task_result_modal" tabindex="-1">
+                        <div class="modal fade" id="task_result_modal_{{ completed_task.task_id }}" tabindex="-1">
                             <div class="modal-dialog modal-xl">
                                 <div class="modal-content">
                                   <div class="modal-header">
