@@ -156,40 +156,37 @@ def rest_interface_info(host, http_client):
 def device_initiate_poller():
     poller_progress.clear()
     poller_result = {}
-    if Device.objects.all():
-        hosts = Device.objects.all()
-        for host in hosts:
-            if host.username and host.password:
-                username = host.username
-                password = host.password
-            else:
-                username = auth_config['cli_logins']['username']
-                password = auth_config['cli_logins']['password']
-            try:
-                with requests.Session() as http_client:
-                    http_client.auth = (username, password)
-                    http_client.headers = {'Accept': 'application/yang-data+json'}
-                    http_client.verify = False
+    hosts = Device.objects.all()
+    for host in hosts:
+        if host.username and host.password:
+            username = host.username
+            password = host.password
+        else:
+            username = auth_config['cli_logins']['username']
+            password = auth_config['cli_logins']['password']
+        try:
+            with requests.Session() as http_client:
+                http_client.auth = (username, password)
+                http_client.headers = {'Accept': 'application/yang-data+json'}
+                http_client.verify = False
+                poller_progress.append(
+                    f'[+] Performing device poll of: {host.hostname}'
+                )
+                device_info = rest_device_info(host, http_client)
+                interface_info = rest_interface_info(host, http_client)
+                if device_info['status'] and interface_info['status'] == 'success':
+                    poller_result['status'] = 'success'
                     poller_progress.append(
-                        f'[+] Performing device poll of: {host.hostname}'
+                        f'>>> Polling of {host.hostname} completed successfully <<<'
                     )
-                    device_info = rest_device_info(host, http_client)
-                    interface_info = rest_interface_info(host, http_client)
-                    if device_info['status'] and interface_info['status'] == 'success':
-                        poller_result['status'] = 'success'
-                        poller_progress.append(
-                            f'>>> Polling of {host.hostname} completed successfully <<<'
-                        )
-                    else:
-                        poller_result['status'] = 'failure'
-            except Exception as error:
-                return {'status': 'error', 'details': str(error)}
-        poller_result.update(
-            {
-                'details': poller_progress,
-                'message': 'Polling task completed successfully'
-            }
-        )
-        return poller_result
-    else:
-        return {'status': 'failed', 'details': 'No devices in the database'}
+                else:
+                    poller_result['status'] = 'failure'
+        except Exception as error:
+            return {'status': 'error', 'details': str(error)}
+    poller_result.update(
+        {
+            'details': poller_progress,
+            'message': 'Polling task completed successfully'
+        }
+    )
+    return poller_result
