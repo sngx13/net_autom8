@@ -29,6 +29,8 @@ common_intfs = [
     'Tunnel',
     'Loopback'
 ]
+# Keep track of poller progress
+poller_progress = []
 
 
 def rest_device_info(host, http_client):
@@ -38,8 +40,8 @@ def rest_device_info(host, http_client):
         data = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_model}'
         )
-        progress.append(
-            f'[+] Connecting to {host.hostname}, using YANG: {yang_model}'
+        poller_progress.append(
+            f'[+] Obtaining YANG output from: {yang_model}'
         )
         if data.status_code == requests.codes.ok:
             device_data = data.json()[yang_model]
@@ -69,10 +71,10 @@ def rest_device_info(host, http_client):
             device_obj.device_uptime = device_uptime
             device_obj.last_polled = timezone.now()
             device_obj.save()
-            progress.append(
-                f'[+] Updating {host.hostname} {device_obj.id} uptime: {device_uptime}'
+            poller_progress.append(
+                f'[+] Updating {host.hostname} - DB object:{device_obj.id}'
             )
-            return {'status': 'success', 'details': progress}
+            return {'status': 'success'}
     except Exception as error:
         return {'status': 'error', 'details': str(error)}
 
@@ -80,7 +82,7 @@ def rest_device_info(host, http_client):
 def rest_interface_info(host, http_client):
     progress = []
     try:
-        progress.append(
+        poller_progress.append(
             f'[+] Deleting old interface DB entries for {host.hostname}'
         )
         DeviceInterfaces.objects.filter(device_id=host.id).delete()
@@ -88,8 +90,8 @@ def rest_interface_info(host, http_client):
         data = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_model}'
         )
-        progress.append(
-            f'[+] Connecting to {host.hostname}, using YANG: {yang_model}'
+        poller_progress.append(
+            f'[+] Obtaining YANG output from: {yang_model}'
         )
         if data.status_code == requests.codes.ok:
             interface_data = data.json()[yang_model]
@@ -144,36 +146,49 @@ def rest_interface_info(host, http_client):
                         phys_address=interface['phys-address']
                     )
                     interfaces_obj.save()
-                    progress.append(
+                    poller_progress.append(
                         f'[+] DB entry {interfaces_obj.id} created for: ' +
                         interface['name']
                     )
-            return {'status': 'success', 'details': progress}
+            return {'status': 'success'}
     except Exception as error:
         return {'status': 'error', 'details': str(error)}
 
 
-def device_initiate_poller(device_id):
-    host = Device.objects.get(pk=device_id)
-    if host.username and host.password:
-        username = host.username
-        password = host.password
-    else:
-        username = auth_config['cli_logins']['username']
-        password = auth_config['cli_logins']['password']
-    try:
-        with requests.Session() as http_client:
-            http_client.auth = (username, password)
-            http_client.headers = {'Accept': 'application/yang-data+json'}
-            http_client.verify = False
-            #
-            device_info = rest_device_info(host, http_client)
-            interface_info = rest_interface_info(host, http_client)
-            if device_info['status'] and interface_info['status'] == 'success':
-                return {
-                    'status': 'success',
-                    'message': f'Polling of {host.hostname} completed successfully!',
-                    'details': device_info['details'] + interface_info['details']
-                }
-    except Exception as error:
-        return {'status': 'error', 'details': str(error)}
+def device_initiate_poller():
+    poller_result = {}
+    if Device.objects.all():
+        hosts = Device.objects.all()
+        for host in hosts:
+            if host.username and host.password:
+                username = host.username
+                password = host.password
+            else:
+                username = auth_config['cli_logins']['username']
+                password = auth_config['cli_logins']['password']
+            try:
+                with requests.Session() as http_client:
+                    http_client.auth = (username, password)
+                    http_client.headers = {'Accept': 'application/yang-data+json'}
+                    http_client.verify = False
+                    poller_progress.append(
+                        f'[+] Performing device poll of: {host.hostname}'
+                    )
+                    device_info = rest_device_info(host, http_client)
+                    interface_info = rest_interface_info(host, http_client)
+                    if device_info['status'] and interface_info['status'] == 'success':
+                        poller_result['status'] = 'success'
+                        poller_progress.append(
+                            f'>>> Polling of {host.hostname} completed successfully <<<'
+                        )
+                    else:
+                        poller_result['status'] = 'failure'
+            except Exception as error:
+                return {'status': 'error', 'details': str(error)}
+        poller_result.update(
+            {
+                'details': poller_progress,
+                'message': 'Polling task completed successfully'
+            }
+        )
+    return poller_result
