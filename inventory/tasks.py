@@ -21,7 +21,7 @@ def task_run_device_discovery(self):
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
-    else:
+    elif task_status['status'] != 'success':
         self.update_state(state=states.FAILURE, meta=task_status)
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
@@ -40,7 +40,7 @@ def task_run_device_rediscovery(self, device_id):
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
-    else:
+    elif task_status['status'] != 'success':
         self.update_state(state=states.FAILURE, meta=task_status)
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
@@ -65,7 +65,7 @@ def task_periodic_device_poll(self):
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
-    else:
+    elif task_status['status'] != 'success':
         self.update_state(state=states.FAILURE, meta=task_status)
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status

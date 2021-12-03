@@ -34,7 +34,6 @@ poller_progress = []
 
 
 def rest_device_info(host, http_client):
-    progress = []
     try:
         yang_model = 'Cisco-IOS-XE-device-hardware-oper:device-hardware-data'
         data = http_client.get(
@@ -80,7 +79,6 @@ def rest_device_info(host, http_client):
 
 
 def rest_interface_info(host, http_client):
-    progress = []
     try:
         poller_progress.append(
             f'[+] Deleting old interface DB entries for {host.hostname}'
