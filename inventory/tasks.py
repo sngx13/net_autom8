@@ -84,16 +84,13 @@ def task_periodic_device_poll(self):
         task_add_to_db = CeleryBackendJobResults(
                     task_id=self.request.id,
                     task_name=self.name,
+                    task_result={
+                        'status': 'rejected',
+                        'details': ['Inventory is empty']
+                    },
+                    task_status='REJECTED',
                     task_requested_by='periodic_device_poll_script',
                     start_time=timezone.now()
         )
         task_add_to_db.save()
-        task_update_db = CeleryBackendJobResults.objects.get(
-            task_id=self.request.id
-        )
-        task_result = AsyncResult(self.request.id)
-        self.update_state(state=states.REJECTED, meta='Task rejected')
-        task_update_db.task_result = task_result.info
-        task_update_db.task_status = task_result.status
-        task_add_to_db.save()
-        return {'status': 'failed', 'details': 'No devices in the database'}
+        return {'status': 'rejected', 'details': ['Inventory is emptry']}
