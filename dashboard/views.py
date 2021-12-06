@@ -30,15 +30,16 @@ def device_graphing_data():
             }
         }
     for device in Device.objects.all():
-        hw_models.append(device.vendor + ' ' + device.hardware_model)
-        data['inventory_chart']['rows'].append(
-                {
-                    'c': [
-                        {'v': device.hostname},
-                        {'v': device.id, 'f': f'Device ID: {device.id}'}
-                    ]
-                }
-        )
+        if device.vendor and device.hardware_model:
+            hw_models.append(device.vendor + ' ' + device.hardware_model)
+            data['inventory_chart']['rows'].append(
+                    {
+                        'c': [
+                            {'v': device.hostname},
+                            {'v': device.id, 'f': f'Device ID: {device.id}'}
+                        ]
+                    }
+            )
     unique_models = list(set(hw_models))
     for model in unique_models:
         data['device_models_chart']['rows'].append(

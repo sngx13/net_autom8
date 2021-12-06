@@ -93,4 +93,4 @@ def task_periodic_device_poll(self):
                     start_time=timezone.now()
         )
         task_add_to_db.save()
-        return {'status': 'rejected', 'details': ['Inventory is emptry']}
+        return {'status': 'rejected', 'details': ['Inventory is empty']}
