@@ -55,10 +55,7 @@ def bulk_device_discovery(hosts):
                     progress.append(
                          f'[+] Unable to connect to: {host.hostname}'
                     )
-                    return {
-                        'status': 'error',
-                        'details': f'[+] Unable to connect to: {host.hostname}'
-                    }
+                    pass
                 else:
                     if check_restconf_en.result:
                         host.rest_conf_enabled = True
