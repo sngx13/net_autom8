@@ -12,9 +12,10 @@ auth_config.read(
     f'{project_dir}/inventory/authentication/device_credentials.ini'
 )
 
+progress = []
+
 
 def bulk_device_discovery(hosts):
-    progress = []
     for host in hosts:
         progress.append(
             f'[+] Initiating connection to: {host.hostname}'
@@ -82,7 +83,6 @@ def bulk_device_discovery(hosts):
 
 
 def single_device_discovery(host):
-    progress = []
     progress.append(
         f'[+] Initiating connection to: {host.hostname}'
     )
@@ -151,6 +151,7 @@ def single_device_discovery(host):
 
 
 def device_initiate_discovery(device_id=None):
+    progress.clear()
     if device_id:
         host = Device.objects.get(pk=device_id)
         discovery_progress = single_device_discovery(host)

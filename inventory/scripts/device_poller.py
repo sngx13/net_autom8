@@ -30,7 +30,7 @@ common_intfs = [
     'Loopback'
 ]
 # Keep track of poller progress
-poller_progress = []
+progress = []
 
 
 def rest_device_info(host, http_client):
@@ -39,7 +39,7 @@ def rest_device_info(host, http_client):
         data = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_model}'
         )
-        poller_progress.append(
+        progress.append(
             f'[+] Obtaining YANG output from: {yang_model}'
         )
         if data.status_code == requests.codes.ok:
@@ -70,7 +70,7 @@ def rest_device_info(host, http_client):
             device_obj.device_uptime = device_uptime
             device_obj.last_polled = timezone.now()
             device_obj.save()
-            poller_progress.append(
+            progress.append(
                 f'[+] Updating {host.hostname} - DB object:{device_obj.id}'
             )
             return {'status': 'success'}
@@ -80,7 +80,7 @@ def rest_device_info(host, http_client):
 
 def rest_interface_info(host, http_client):
     try:
-        poller_progress.append(
+        progress.append(
             f'[+] Deleting old interface DB entries for {host.hostname}'
         )
         DeviceInterfaces.objects.filter(device_id=host.id).delete()
@@ -88,7 +88,7 @@ def rest_interface_info(host, http_client):
         data = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_model}'
         )
-        poller_progress.append(
+        progress.append(
             f'[+] Obtaining YANG output from: {yang_model}'
         )
         if data.status_code == requests.codes.ok:
@@ -98,8 +98,10 @@ def rest_interface_info(host, http_client):
                 if if_parser.match(interface['name']).group(1) in common_intfs:
                     # Interface type e.g: Ethernet/Loopback/Tunnel
                     if 'csmacd' in interface['interface-type']:
-                        speed = interface['ether-state']['negotiated-port-speed'].replace('speed-', '')
-                        duplex = interface['ether-state']['negotiated-duplex-mode'].replace('-duplex', '')
+                        speed = interface['ether-state']['negotiated-port-speed'].replace(
+                            'speed-', '')
+                        duplex = interface['ether-state']['negotiated-duplex-mode'].replace(
+                            '-duplex', '')
                         interface_type = 'ethernet'
                     elif 'loopback' in interface['interface-type']:
                         speed = 'N/A'
@@ -144,7 +146,7 @@ def rest_interface_info(host, http_client):
                         phys_address=interface['phys-address']
                     )
                     interfaces_obj.save()
-                    poller_progress.append(
+                    progress.append(
                         f'[+] DB entry {interfaces_obj.id} created for: ' +
                         interface['name']
                     )
@@ -154,7 +156,7 @@ def rest_interface_info(host, http_client):
 
 
 def device_initiate_poller():
-    poller_progress.clear()
+    progress.clear()
     poller_result = {}
     hosts = Device.objects.all()
     for host in hosts:
@@ -169,14 +171,14 @@ def device_initiate_poller():
                 http_client.auth = (username, password)
                 http_client.headers = {'Accept': 'application/yang-data+json'}
                 http_client.verify = False
-                poller_progress.append(
+                progress.append(
                     f'[+] Performing device poll of: {host.hostname}'
                 )
                 device_info = rest_device_info(host, http_client)
                 interface_info = rest_interface_info(host, http_client)
                 if device_info['status'] and interface_info['status'] == 'success':
                     poller_result['status'] = 'success'
-                    poller_progress.append(
+                    progress.append(
                         f'>>> Polling of {host.hostname} completed successfully <<<'
                     )
                 else:
@@ -185,7 +187,7 @@ def device_initiate_poller():
             return {'status': 'error', 'details': str(error)}
     poller_result.update(
         {
-            'details': poller_progress,
+            'details': progress,
             'message': 'Polling task completed successfully'
         }
     )
