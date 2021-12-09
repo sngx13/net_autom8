@@ -3,6 +3,7 @@ from django.utils import timezone
 # Celery
 from celery import shared_task, states
 from celery.result import AsyncResult
+from celery.exceptions import Ignore
 # Scrips
 from .scripts.device_discovery import device_initiate_discovery
 from .scripts.device_poller import device_initiate_poller
@@ -25,10 +26,10 @@ def task_run_device_discovery(self):
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
-    elif task_status['status'] != 'success':
-        self.update_state(state=states.FAILURE, meta=task_status)
-        task_update_db.task_result = task_result.info
-        task_update_db.task_status = task_result.status
+    else:
+        self.update_state(state=states.FAILURE)
+        task_update_db.task_result = task_status
+        task_update_db.task_status = 'FAILURE'
         task_update_db.save()
     return task_status
 
@@ -46,10 +47,10 @@ def task_run_device_rediscovery(self, device_id):
         task_update_db.task_result = task_result.info
         task_update_db.task_status = task_result.status
         task_update_db.save()
-    elif task_status['status'] != 'success':
-        self.update_state(state=states.FAILURE, meta=task_status)
-        task_update_db.task_result = task_result.info
-        task_update_db.task_status = task_result.status
+    else:
+        self.update_state(state=states.FAILURE)
+        task_update_db.task_result = task_status
+        task_update_db.task_status = 'FAILURE'
         task_update_db.save()
     return task_status
 
@@ -74,23 +75,23 @@ def task_periodic_device_poll(self):
             task_update_db.task_result = task_result.info
             task_update_db.task_status = task_result.status
             task_update_db.save()
-        elif task_status['status'] != 'success':
-            self.update_state(state=states.FAILURE, meta=task_status)
-            task_update_db.task_result = task_result.info
-            task_update_db.task_status = task_result.status
+        else:
+            self.update_state(state=states.FAILURE)
+            task_update_db.task_result = task_status
+            task_update_db.task_status = 'FAILURE'
             task_update_db.save()
         return task_status
     else:
         task_add_to_db = CeleryBackendJobResults(
-                    task_id=self.request.id,
-                    task_name=self.name,
-                    task_result={
-                        'status': 'rejected',
-                        'details': ['Inventory is empty']
-                    },
-                    task_status='REJECTED',
-                    task_requested_by='periodic_device_poll_script',
-                    start_time=timezone.now()
+            task_id=self.request.id,
+            task_name=self.name,
+            task_result={
+                'status': 'rejected',
+                'details': ['Inventory is empty']
+            },
+            task_status='REJECTED',
+            task_requested_by='periodic_device_poll_script',
+            start_time=timezone.now()
         )
         task_add_to_db.save()
         return {'status': 'rejected', 'details': ['Inventory is empty']}

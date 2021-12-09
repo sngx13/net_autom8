@@ -3,19 +3,21 @@ import os
 from scrapli import Scrapli
 from scrapli.exceptions import ScrapliException
 # Models
-from ..models import Device, DeviceInterfaces
+from ..models import Device
 
 
+# Auth
 project_dir = os.getcwd()
 auth_config = configparser.ConfigParser()
 auth_config.read(
     f'{project_dir}/inventory/authentication/device_credentials.ini'
 )
-
+# Keep track of discovery progress
 progress = []
 
 
 def bulk_device_discovery(hosts):
+    progress.clear()
     for host in hosts:
         progress.append(
             f'[+] Initiating connection to: {host.hostname}'
@@ -56,7 +58,7 @@ def bulk_device_discovery(hosts):
                     progress.append(
                          f'[+] Unable to connect to: {host.hostname}'
                     )
-                    pass
+                    return {'status': 'failure'}
                 else:
                     if check_restconf_en.result:
                         host.rest_conf_enabled = True
@@ -83,6 +85,7 @@ def bulk_device_discovery(hosts):
 
 
 def single_device_discovery(host):
+    progress.clear()
     progress.append(
         f'[+] Initiating connection to: {host.hostname}'
     )
@@ -121,10 +124,7 @@ def single_device_discovery(host):
             progress.append(
                 f'[+] Unable to connect to: {host.hostname}'
             )
-            return {
-                'status': 'error',
-                'details': f'[+] Unable to connect to: {host.hostname}'
-            }
+            return {'status': 'failure'}
         else:
             if check_restconf_en.result:
                 host.rest_conf_enabled = True
@@ -151,24 +151,20 @@ def single_device_discovery(host):
 
 
 def device_initiate_discovery(device_id=None):
-    progress.clear()
     if device_id:
         host = Device.objects.get(pk=device_id)
         discovery_progress = single_device_discovery(host)
         if discovery_progress['status'] == 'success':
-            discovery_progress.update(
-                {'message': 'Rediscovery task completed successfully!'}
-            )
             return discovery_progress
         else:
+            discovery_progress.update({'details': progress})
             return discovery_progress
     else:
         hosts = Device.objects.all()
         discovery_progress = bulk_device_discovery(hosts)
         if discovery_progress['status'] == 'success':
-            discovery_progress.update(
-                {'message': 'Discovery task completed successfully!'}
-            )
             return discovery_progress
         else:
+            print(f'[+] Discovery failed: {discovery_progress}')
+            discovery_progress.update({'details': progress})
             return discovery_progress

@@ -39,10 +39,10 @@ def rest_device_info(host, http_client):
         data = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_model}'
         )
-        progress.append(
-            f'[+] Obtaining YANG output from: {yang_model}'
-        )
         if data.status_code == requests.codes.ok:
+            progress.append(
+                f'[+] Obtaining YANG output from: {yang_model}'
+            )
             device_data = data.json()[yang_model]
             for hw in device_data['device-hardware']['device-inventory']:
                 if hw['hw-type'] == 'hw-type-chassis':
@@ -74,24 +74,27 @@ def rest_device_info(host, http_client):
                 f'[+] Updating {host.hostname} - DB object:{device_obj.id}'
             )
             return {'status': 'success'}
+        else:
+            return {'status': 'failure'}
     except Exception as error:
         return {'status': 'error', 'details': str(error)}
 
 
 def rest_interface_info(host, http_client):
     try:
-        progress.append(
-            f'[+] Deleting old interface DB entries for {host.hostname}'
-        )
-        DeviceInterfaces.objects.filter(device_id=host.id).delete()
+        if DeviceInterfaces.objects.filter(device_id=host.id):
+            progress.append(
+                f'[+] Deleting old interface DB entries for {host.hostname}'
+            )
+            DeviceInterfaces.objects.filter(device_id=host.id).delete()
         yang_model = 'Cisco-IOS-XE-interfaces-oper:interfaces'
         data = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_model}'
         )
-        progress.append(
-            f'[+] Obtaining YANG output from: {yang_model}'
-        )
         if data.status_code == requests.codes.ok:
+            progress.append(
+                f'[+] Obtaining YANG output from: {yang_model}'
+            )
             interface_data = data.json()[yang_model]
             for interface in interface_data['interface']:
                 # Exclude any interfaces other than Ethernet,Loopback,Tunnel
@@ -151,6 +154,8 @@ def rest_interface_info(host, http_client):
                         interface['name']
                     )
             return {'status': 'success'}
+        else:
+            return {'status': 'failure'}
     except Exception as error:
         return {'status': 'error', 'details': str(error)}
 
@@ -182,6 +187,12 @@ def device_initiate_poller():
                         f'>>> Polling of {host.hostname} completed successfully <<<'
                     )
                 else:
+                    progress.append(
+                        f'[+] REST API call to: {host.hostname} has failed'
+                    )
+                    progress.append(
+                        f'>>> Polling of {host.hostname} failed to complete <<<'
+                    )
                     poller_result['status'] = 'failure'
         except Exception as error:
             return {'status': 'error', 'details': str(error)}
