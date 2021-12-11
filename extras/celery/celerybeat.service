@@ -11,7 +11,7 @@ Group=root
 
 EnvironmentFile=/etc/conf.d/celery.conf
 
-WorkingDirectory= { REPLACE WITH PROJECT DIR}
+WorkingDirectory=/home/sergheigolipad/Projects/Python/net_autom8
 
 ExecStart=/bin/sh -c '${CELERY_BIN} -A ${CELERY_APP} beat  \
     --pidfile=${CELERYBEAT_PID_FILE} \

@@ -3,7 +3,6 @@ from django.utils import timezone
 # Celery
 from celery import shared_task, states
 from celery.result import AsyncResult
-from celery.exceptions import Ignore
 # Scrips
 from .scripts.device_discovery import device_initiate_discovery
 from .scripts.device_poller import device_initiate_poller
