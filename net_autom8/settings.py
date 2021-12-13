@@ -123,9 +123,9 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    ('css', '/home/sergheigolipad/Projects/Python/net_autom8/static/css'),
-    ('js', '/home/sergheigolipad/Projects/Python/net_autom8/static/js'),
-    ('images', '/home/sergheigolipad/Projects/Python/net_autom8/static/images'),
+    ('css', '/home/sngx/Projects/Python/net_autom8/static/css'),
+    ('js', '/home/sngx/Projects/Python/net_autom8/static/js'),
+    ('images', '/home/sngx/Projects/Python/net_autom8/static/images'),
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
