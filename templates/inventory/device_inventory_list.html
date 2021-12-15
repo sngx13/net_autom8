@@ -13,6 +13,7 @@
                 <th><i class="fas fa-barcode"></i> Serial Number</th>
                 <th><i class="fas fa-keyboard"></i> Mgmt</th>
                 <th><i class="fas fa-calendar-day"></i> Date Added</th>
+                <th><i class="fas fa-poll"></i> Last Poll</th>
                 <th></th>
             </tr>
         </thead>
@@ -20,9 +21,11 @@
             {% for device in data %}
             <tr>
                 <td>
-                    <a class="badge bg-primary text-decoration-none" href="{% url 'inventory:device_detailed_information' device.id %}" onclick="spinner_toggle_on();">
-                    {{ device.hostname }}
-                </a>
+                    <a class="badge bg-primary text-decoration-none"
+                        href="{% url 'inventory:device_detailed_information' device.id %}"
+                        onclick="spinner_toggle_on();">
+                        {{ device.hostname }}
+                    </a>
                 </td>
                 <td>{{ device.mgmt_ip }}</td>
                 <td>{{ device.vendor }}</td>
@@ -43,14 +46,18 @@
                 </td>
                 {% endif %}
                 <td>{{ device.date_added }}</td>
+                <td>{{ device.last_polled }}</td>
                 <td>
-                    <a class="text-decoration-none" href="{% url 'inventory:device_force_rediscovery' device.id %}" data-bs-toggle="tooltip" title="Rediscover">
+                    <a class="text-decoration-none" href="{% url 'inventory:device_force_rediscovery' device.id %}"
+                        data-bs-toggle="tooltip" title="Rediscover">
                         <i class="fas fa-sync-alt"></i>
                     </a>
-                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_edit' device.id %}" data-bs-toggle="tooltip" title="Edit">
+                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_edit' device.id %}"
+                        data-bs-toggle="tooltip" title="Edit">
                         <i class="fas fa-edit text-info"></i>
                     </a>
-                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_delete' device.id %}" data-bs-toggle="tooltip" title="Delete">
+                    <a class="text-decoration-none" href="{% url 'inventory:device_inventory_delete' device.id %}"
+                        data-bs-toggle="tooltip" title="Delete">
                         <i class="fas fa-trash-alt text-danger"></i>
                     </a>
                 </td>
