@@ -26,12 +26,13 @@ if_parser = re.compile('([a-zA-Z]+)([0-9]+)')
 
 
 def edit_interface(host, interface):
-    net_mask = IPNetwork(
-        f'{interface.ipv4_address}/{interface.ipv4_subnet_mask}'
-    ).netmask
+    net_mask = str(
+        IPNetwork(
+            f'{interface.ipv4_address}/{interface.ipv4_subnet_mask}'
+        ).netmask
+    )
     interface_type = str(if_parser.findall(interface.name)[0][0])
     interface_number = int(if_parser.findall(interface.name)[0][1])
-    print(net_mask)
     cfg = {
         f'Cisco-IOS-XE-native:{interface_type}': {
             'name': interface_number,
@@ -40,13 +41,12 @@ def edit_interface(host, interface):
                 'address': {
                     'primary': {
                         'address': interface.ipv4_address,
-                        'mask': str(net_mask)
+                        'mask': net_mask
                     }
                 }
             }
         }
     }
-    print(cfg)
     if host.username and host.password:
         username = host.username
         password = host.password
@@ -66,6 +66,12 @@ def edit_interface(host, interface):
             )
             if data.status_code == codes.ok:
                 print(data)
+                cfg_save = http_client.post(
+                    f'https://{host.mgmt_ip}/restconf/operations/cisco-ia:save-config/',
+                    auth=(username, password),
+                    verify=False,
+                )
+                print(cfg_save)
             else:
                 http_status_description = str(
                     HTTPStatus(data.status_code)).split('.')[1]
