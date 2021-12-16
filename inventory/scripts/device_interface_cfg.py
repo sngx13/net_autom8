@@ -1,9 +1,10 @@
 import configparser
-from http import HTTPStatus
 import os
 import re
 import requests
 import urllib3
+from http import HTTPStatus
+from netaddr import IPNetwork
 from requests import codes
 
 
@@ -25,18 +26,21 @@ if_parser = re.compile('([a-zA-Z]+)([0-9]+)')
 
 
 def edit_interface(host, interface):
+    net_mask = IPNetwork(
+        f'{interface.ipv4_address}/{interface.ipv4_subnet_mask}'
+    ).netmask
     interface_type = str(if_parser.findall(interface.name)[0][0])
     interface_number = int(if_parser.findall(interface.name)[0][1])
-    print(type(interface.description))
+    print(net_mask)
     cfg = {
         f'Cisco-IOS-XE-native:{interface_type}': {
             'name': interface_number,
-            'description': f'{interface.description}',
+            'description': interface.description,
             'ip': {
                 'address': {
                     'primary': {
-                        'address': f'{interface.ipv4_address}',
-                        'mask': f'{interface.ipv4_subnet_mask}'
+                        'address': interface.ipv4_address,
+                        'mask': str(net_mask)
                     }
                 }
             }
@@ -61,7 +65,7 @@ def edit_interface(host, interface):
                 json=cfg
             )
             if data.status_code == codes.ok:
-                print(data.json())
+                print(data)
             else:
                 http_status_description = str(
                     HTTPStatus(data.status_code)).split('.')[1]
