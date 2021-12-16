@@ -1,0 +1,15 @@
+{% extends "base_template/base.html"%}
+{% load crispy_forms_tags %}
+{% block content %}
+<form method="POST">
+    {{ data.device_id }}
+    {% csrf_token %}
+    <div class="col-md-3">
+        {{ form|crispy }}
+    </div>
+    <button type="submit" class="btn btn-sm btn-primary">
+        <i class="fas fa-pencil-alt"></i>
+        Amend
+    </button>
+</form>
+{% endblock %}

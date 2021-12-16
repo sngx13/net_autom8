@@ -10,11 +10,13 @@ from random import randint
 # Tasks
 from .tasks import task_run_device_discovery
 from .tasks import task_run_device_rediscovery
+# Scripts
+from .scripts.device_interface_cfg import edit_interface
 # Models
 from .models import Device, DeviceInterfaces
 from housekeeping.models import CeleryUserJobResults
 # Forms
-from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm
+from .forms import UploadFileForm, DeviceCreateForm, DeviceEditForm, InterfaceEditForm
 
 
 def inventory_importer(file):
@@ -179,9 +181,9 @@ def device_inventory_import(request):
 def device_inventory_edit(request, device_id):
     device = Device.objects.get(pk=device_id)
     context = {
-            'title': 'Inventory - Device Editor',
-            'card_header': f'Device Editor: {device.hostname} {device.mgmt_ip}',
-            'data': device
+        'title': 'Inventory - Device Editor',
+        'card_header': f'Device Editor: {device.hostname} {device.mgmt_ip}',
+        'data': device
     }
     if request.method == 'GET':
         form = DeviceEditForm(instance=device)
@@ -202,6 +204,35 @@ def device_inventory_edit(request, device_id):
                 'There has been a problem editing the device!'
             )
         return HttpResponseRedirect(request.path)
+
+
+def device_interface_edit(request, interface_name):
+    interface = DeviceInterfaces.objects.get(name=interface_name)
+    context = {
+        'title': 'Device - Edit Interface',
+        'card_header': f'Device: {interface.device_id.hostname} - Editing Interface: {interface.name}'
+    }
+    if request.method == 'GET':
+        form = InterfaceEditForm(instance=interface)
+        context['form'] = form
+        return render(request, 'inventory/device_interface_edit.html', context)
+    elif request.method == 'POST':
+        form = InterfaceEditForm(request.POST, instance=interface)
+        context['form'] = form
+        if form.is_valid():
+            edit_interface(interface.device_id, interface)
+            form.save()
+            messages.success(
+                request,
+                f'Changes to: {interface.name} succeeded!'
+            )
+        else:
+            messages.error(
+                request,
+                'There has been a problem editing the interface!'
+            )
+        return HttpResponseRedirect(request.path)
+    return render(request, 'inventory/device_interface_edit.html', context)
 
 
 def device_inventory_list(request):

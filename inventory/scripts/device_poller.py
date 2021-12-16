@@ -18,7 +18,11 @@ auth_config = configparser.ConfigParser()
 auth_config.read(
     f'{project_dir}/inventory/authentication/device_credentials.ini'
 )
-
+# Headers
+headers = {
+    'Accept': 'application/yang-data+json',
+    'Content-Type': 'application/yang-data+json'
+}
 # Regex parser for interfaces
 if_parser = re.compile('([a-zA-Z]+)([0-9]+)')
 # List of common interfaces for matching ones found on device
@@ -174,7 +178,7 @@ def device_initiate_poller():
         try:
             with requests.Session() as http_client:
                 http_client.auth = (username, password)
-                http_client.headers = {'Accept': 'application/yang-data+json'}
+                http_client.headers = headers
                 http_client.verify = False
                 progress.append(
                     f'[+] Performing device poll of: {host.hostname}'

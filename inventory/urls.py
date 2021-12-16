@@ -26,6 +26,11 @@ urlpatterns = [
         name='device_inventory_edit'
     ),
     path(
+        'device_interface_edit/<interface_name>/',
+        login_required(views.device_interface_edit),
+        name='device_interface_edit'
+    ),
+    path(
         'device_inventory_import/',
         login_required(views.device_inventory_import),
         name='device_inventory_import'

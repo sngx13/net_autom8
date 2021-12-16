@@ -78,6 +78,13 @@
                                     </div>
                                 </td>
                                 <td>{{ interface.mtu }}</td>
+                                <td>
+                                    <a class="text-decoration-none"
+                                        href="{% url 'inventory:device_interface_edit' interface.name %}"
+                                        data-bs-toggle="tooltip" title="Edit">
+                                        <i class="fas fa-edit text-info"></i>
+                                    </a>
+                                </td>
                                 {% endfor %}
                             </tr>
                         </tbody>
