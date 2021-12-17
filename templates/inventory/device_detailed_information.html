@@ -71,6 +71,13 @@
                                         data-bs-toggle="tooltip" title="Edit">
                                         <i class="fas fa-edit text-info"></i>
                                     </a>
+                                    {% if interface.interface_type != 'iana-if-type:ethernetCsmacd' %}
+                                    <a class="text-decoration-none"
+                                        href="{% url 'inventory:device_interface_delete' interface.name %}"
+                                        data-bs-toggle="tooltip" title="Delete">
+                                        <i class="fas fa-trash-alt text-danger"></i>
+                                    </a>
+                                    {% endif %}
                                 </td>
                                 {% endfor %}
                             </tr>

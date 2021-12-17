@@ -1,6 +1,5 @@
 import configparser
 import os
-import re
 import requests
 import urllib3
 from datetime import datetime
@@ -23,16 +22,6 @@ headers = {
     'Accept': 'application/yang-data+json',
     'Content-Type': 'application/yang-data+json'
 }
-# Regex parser for interfaces
-if_parser = re.compile('([a-zA-Z]+)([0-9]+)')
-# List of common interfaces for matching ones found on device
-common_intfs = [
-    'FastEthernet',
-    'GigabitEthernet',
-    'Ten-GigabitEthernet',
-    'Tunnel',
-    'Loopback'
-]
 # Keep track of poller progress
 progress = []
 
@@ -91,13 +80,11 @@ def rest_interface_info(host, http_client):
                 f'[+] Deleting old interface DB entries for {host.hostname}'
             )
             DeviceInterfaces.objects.filter(device_id=host.id).delete()
-        # Interface base info
         yang_intf_plain = 'ietf-interfaces:interfaces'
+        yang_intf_state = 'ietf-interfaces:interfaces-state'
         data_intf_plain = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_intf_plain}'
         )
-        # Interface state info
-        yang_intf_state = 'ietf-interfaces:interfaces-state'
         data_intf_state = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_intf_state}'
         )

@@ -11,7 +11,7 @@ from random import randint
 from .tasks import task_run_device_discovery
 from .tasks import task_run_device_rediscovery
 # Scripts
-from .scripts.device_configurator import edit_interface
+from .scripts.device_configurator import edit_interface, delete_interface
 # Models
 from .models import Device, DeviceInterfaces
 from housekeeping.models import CeleryUserJobResults
@@ -204,6 +204,17 @@ def device_inventory_edit(request, device_id):
                 'There has been a problem editing the device!'
             )
         return HttpResponseRedirect(request.path)
+
+
+def device_interface_delete(request, interface_name):
+    interface = DeviceInterfaces.objects.get(name=interface_name)
+    interface.delete()
+    delete_interface(interface.device_id, interface)
+    messages.success(
+        request,
+        f'Interface: {interface.name} was deleted successfully!'
+    )
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def device_interface_edit(request, interface_name):
