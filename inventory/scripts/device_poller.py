@@ -1,6 +1,7 @@
 import configparser
 import os
 import requests
+from requests import codes
 import urllib3
 from datetime import datetime
 from django.utils import timezone
@@ -80,11 +81,13 @@ def rest_interface_info(host, http_client):
                 f'[+] Deleting old interface DB entries for {host.hostname}'
             )
             DeviceInterfaces.objects.filter(device_id=host.id).delete()
+        # Interface base info
         yang_intf_plain = 'ietf-interfaces:interfaces'
-        yang_intf_state = 'ietf-interfaces:interfaces-state'
         data_intf_plain = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_intf_plain}'
         )
+        # Interface state info
+        yang_intf_state = 'ietf-interfaces:interfaces-state'
         data_intf_state = http_client.get(
             f'https://{host.mgmt_ip}/restconf/data/{yang_intf_state}'
         )
@@ -96,7 +99,6 @@ def rest_interface_info(host, http_client):
                 for intf_state in data_intf_state.json()[yang_intf_state]['interface']:
                     if intf_plain['name'] == intf_state['name']:
                         intf_name = intf_plain['name']
-                        intf_desc = intf_plain['description']
                         intf_type = intf_plain['type']
                         intf_phys = intf_state['phys-address']
                         intf_admin_status = intf_state['admin-status']
@@ -106,9 +108,11 @@ def rest_interface_info(host, http_client):
                             ipv4_subnet_mask = IPAddress(
                                 intf_plain['ietf-ip:ipv4']['address'][0]['netmask']
                             ).netmask_bits()
+                            intf_desc = intf_plain['description']
                         except KeyError:
                             ipv4_address = ''
                             ipv4_subnet_mask = ''
+                            intf_desc = ''
                         interfaces_obj = DeviceInterfaces(
                             device_id=host,
                             name=intf_name,
@@ -128,6 +132,7 @@ def rest_interface_info(host, http_client):
         else:
             return {'status': 'failure'}
     except Exception as error:
+        print(error)
         return {'status': 'error', 'details': str(error)}
 
 
