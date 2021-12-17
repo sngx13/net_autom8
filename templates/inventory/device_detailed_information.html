@@ -50,11 +50,7 @@
                                 {% else %}
                                 <td>N/A</td>
                                 {% endif %}
-                                {% if interface.ipv4_address %}
                                 <td>{{ interface.ipv4_address }}/{{ interface.ipv4_subnet_mask }}</td>
-                                {% else %}
-                                <td>N/A</td>
-                                {% endif %}
                                 {% if 'up' in interface.admin_status and 'up' in interface.oper_status %}
                                 <td><i class="fas fa-check-double text-success blink"></i></td>
                                 {% else %}

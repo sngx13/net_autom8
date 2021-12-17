@@ -2,6 +2,7 @@ import configparser
 import os
 import requests
 from requests import codes
+from requests.sessions import Session
 import urllib3
 from datetime import datetime
 from django.utils import timezone
@@ -103,15 +104,18 @@ def rest_interface_info(host, http_client):
                         intf_phys = intf_state['phys-address']
                         intf_admin_status = intf_state['admin-status']
                         intf_oper_status = intf_state['oper-status']
-                        try:
+                        if intf_plain['ietf-ip:ipv4']:
                             ipv4_address = intf_plain['ietf-ip:ipv4']['address'][0]['ip']
                             ipv4_subnet_mask = IPAddress(
                                 intf_plain['ietf-ip:ipv4']['address'][0]['netmask']
                             ).netmask_bits()
-                            intf_desc = intf_plain['description']
-                        except KeyError:
+                            print(ipv4_address, ipv4_subnet_mask)
+                        if not intf_plain['ietf-ip:ipv4']:
                             ipv4_address = ''
                             ipv4_subnet_mask = ''
+                        try:
+                            intf_desc = intf_plain['description']
+                        except KeyError:
                             intf_desc = ''
                         interfaces_obj = DeviceInterfaces(
                             device_id=host,
@@ -125,6 +129,7 @@ def rest_interface_info(host, http_client):
                             phys_address=intf_phys
                         )
                         interfaces_obj.save()
+                        # print(f'Plain: {intf_plain} State: {intf_state}')
                         progress.append(
                             f'[+] DB entry {interfaces_obj.id} created for: {intf_name}'
                         )
