@@ -23,11 +23,9 @@ class DeviceInterfaces(models.Model):
     name = models.CharField(blank=True, null=True, max_length=255)
     interface_type = models.CharField(blank=True, null=True, max_length=255)
     description = models.CharField(blank=True, null=True, max_length=255)
-    ipv4_address = models.GenericIPAddressField(blank=True, null=True, max_length=12)
+    ipv4_address = models.GenericIPAddressField(
+        blank=True, null=True, max_length=12)
     ipv4_subnet_mask = models.CharField(blank=True, null=True, max_length=12)
-    speed = models.CharField(blank=True, null=True, max_length=255)
-    duplex = models.CharField(blank=True, null=True, max_length=255)
     admin_status = models.CharField(blank=True, null=True, max_length=255)
     oper_status = models.CharField(blank=True, null=True, max_length=255)
     phys_address = models.CharField(blank=True, null=True, max_length=255)
-    mtu = models.CharField(blank=True, null=True, max_length=5)

@@ -56,7 +56,7 @@ def bulk_device_discovery(hosts):
                         output = version_cmd.textfsm_parse_output()
                 except ScrapliException:
                     progress.append(
-                         f'[+] Unable to connect to: {host.hostname}'
+                        f'[+] Unable to connect to: {host.hostname}'
                     )
                     return {'status': 'failure'}
                 else:
@@ -104,13 +104,13 @@ def single_device_discovery(host):
                 '[+] Using hardcoded logins'
             )
         device = {
-                    'host': host.mgmt_ip,
-                    'auth_username': username,
-                    'auth_password': password,
-                    'auth_strict_key': False,
-                    'platform': platform,
-                    'ssh_config_file': '/etc/ssh/ssh_config'
-                }
+            'host': host.mgmt_ip,
+            'auth_username': username,
+            'auth_password': password,
+            'auth_strict_key': False,
+            'platform': platform,
+            'ssh_config_file': '/etc/ssh/ssh_config'
+        }
         try:
             with Scrapli(**device) as conn:
                 progress.append(

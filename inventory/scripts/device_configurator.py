@@ -1,11 +1,9 @@
 import configparser
 import os
-import re
 import requests
 import urllib3
 from http import HTTPStatus
 from netaddr import IPNetwork
-from requests import codes
 
 
 # Disable invalid cert warning
@@ -21,8 +19,8 @@ headers = {
     'Accept': 'application/yang-data+json',
     'Content-Type': 'application/yang-data+json'
 }
-# Regex parser for interfaces
-if_parser = re.compile('([a-zA-Z]+)([0-9]+)')
+# Response codes
+http_respose_codes = [200, 201, 204]
 
 
 def edit_interface(host, interface):
@@ -31,19 +29,22 @@ def edit_interface(host, interface):
             f'{interface.ipv4_address}/{interface.ipv4_subnet_mask}'
         ).netmask
     )
-    interface_type = str(if_parser.findall(interface.name)[0][0])
-    interface_number = int(if_parser.findall(interface.name)[0][1])
+    if interface.admin_status == 'up':
+        admin_status = True
+    elif interface.admin_status == 'down':
+        admin_status = False
     cfg = {
-        f'Cisco-IOS-XE-native:{interface_type}': {
-            'name': interface_number,
+        'ietf-interfaces:interface': {
+            'name': interface.name,
             'description': interface.description,
-            'ip': {
-                'address': {
-                    'primary': {
-                        'address': interface.ipv4_address,
-                        'mask': net_mask
+            'enabled': admin_status,
+            'ietf-ip:ipv4': {
+                'address': [
+                    {
+                        'ip': interface.ipv4_address,
+                        'netmask': net_mask
                     }
-                }
+                ]
             }
         }
     }
@@ -59,24 +60,25 @@ def edit_interface(host, interface):
             http_client.headers = headers
             http_client.verify = False
             data = http_client.patch(
-                f'https://{host.mgmt_ip}/restconf/data/native/interface/{interface_type}={interface_number}',
+                f'https://{host.mgmt_ip}/restconf/data/ietf-interfaces:interfaces/interface={interface.name}',
                 auth=(username, password),
                 verify=False,
                 json=cfg
             )
-            if data.status_code == codes.ok:
-                print(data)
+            if data.status_code in http_respose_codes:
                 cfg_save = http_client.post(
                     f'https://{host.mgmt_ip}/restconf/operations/cisco-ia:save-config/',
                     auth=(username, password),
                     verify=False,
                 )
-                print(cfg_save)
+                if cfg_save.status_code in http_respose_codes:
+                    return {'status': 'success', 'details': 'Config was saved'}
             else:
-                http_status_description = str(
+                http_status_verbal = str(
                     HTTPStatus(data.status_code)).split('.')[1]
-                print(
-                    f'Received HTTP:{data.status_code} - {http_status_description}'
-                )
+                return {
+                    'status': 'failure',
+                    'details': f'Could not edit {interface.name}, received HTTP:{data.status_code}/{http_status_verbal}'
+                }
     except Exception as error:
         return {'status': 'error', 'details': str(error)}

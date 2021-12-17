@@ -91,72 +91,52 @@ def rest_interface_info(host, http_client):
                 f'[+] Deleting old interface DB entries for {host.hostname}'
             )
             DeviceInterfaces.objects.filter(device_id=host.id).delete()
-        yang_model = 'Cisco-IOS-XE-interfaces-oper:interfaces'
-        data = http_client.get(
-            f'https://{host.mgmt_ip}/restconf/data/{yang_model}'
+        # Interface base info
+        yang_intf_plain = 'ietf-interfaces:interfaces'
+        data_intf_plain = http_client.get(
+            f'https://{host.mgmt_ip}/restconf/data/{yang_intf_plain}'
         )
-        if data.status_code == requests.codes.ok:
+        # Interface state info
+        yang_intf_state = 'ietf-interfaces:interfaces-state'
+        data_intf_state = http_client.get(
+            f'https://{host.mgmt_ip}/restconf/data/{yang_intf_state}'
+        )
+        if data_intf_plain.status_code and data_intf_state.status_code == requests.codes.ok:
             progress.append(
-                f'[+] Obtaining YANG output from: {yang_model}'
+                f'[+] Obtaining YANG output from: {yang_intf_plain} and {yang_intf_state}'
             )
-            interface_data = data.json()[yang_model]
-            for interface in interface_data['interface']:
-                # Exclude any interfaces other than Ethernet,Loopback,Tunnel
-                if if_parser.match(interface['name']).group(1) in common_intfs:
-                    # Interface type e.g: Ethernet/Loopback/Tunnel
-                    if 'csmacd' in interface['interface-type']:
-                        speed = interface['ether-state']['negotiated-port-speed'].replace(
-                            'speed-', '')
-                        duplex = interface['ether-state']['negotiated-duplex-mode'].replace(
-                            '-duplex', '')
-                        interface_type = 'ethernet'
-                    elif 'loopback' in interface['interface-type']:
-                        speed = 'N/A'
-                        duplex = 'N/A'
-                        interface_type = 'loopback'
-                    elif 'tunnel' in interface['interface-type']:
-                        speed = 'N/A'
-                        duplex = 'N/A'
-                        interface_type = 'tunnel'
-                    # Admin status
-                    if 'if-state-up' in interface['admin-status']:
-                        admin_status = 'up'
-                    elif 'if-state-down' in interface['admin-status']:
-                        admin_status = 'down'
-                    # Operational status
-                    if 'ready' in interface['oper-status']:
-                        oper_status = 'up'
-                    elif 'no-pass' in interface['oper-status']:
-                        oper_status = 'down'
-                    elif 'lower-layer-down' in interface['oper-status']:
-                        oper_status = 'down'
-                    try:
-                        ipv4_address = interface['ipv4']
-                        ipv4_subnet_mask = IPAddress(
-                            interface['ipv4-subnet-mask']
-                        ).netmask_bits()
-                    except KeyError:
-                        ipv4_address = 'N/A'
-                        ipv4_subnet_mask = 'N/A'
-                    interfaces_obj = DeviceInterfaces(
-                        device_id=host,
-                        name=interface['name'],
-                        description=interface['description'],
-                        interface_type=interface_type,
-                        ipv4_address=ipv4_address,
-                        ipv4_subnet_mask=ipv4_subnet_mask,
-                        admin_status=admin_status,
-                        oper_status=oper_status,
-                        speed=speed,
-                        duplex=duplex,
-                        mtu=interface['mtu'],
-                        phys_address=interface['phys-address']
-                    )
-                    interfaces_obj.save()
-                    progress.append(
-                        f'[+] DB entry {interfaces_obj.id} created for: ' +
-                        interface['name']
-                    )
+            for intf_plain in data_intf_plain.json()[yang_intf_plain]['interface']:
+                for intf_state in data_intf_state.json()[yang_intf_state]['interface']:
+                    if intf_plain['name'] == intf_state['name']:
+                        intf_name = intf_plain['name']
+                        intf_desc = intf_plain['description']
+                        intf_type = intf_plain['type']
+                        intf_phys = intf_state['phys-address']
+                        intf_admin_status = intf_state['admin-status']
+                        intf_oper_status = intf_state['oper-status']
+                        try:
+                            ipv4_address = intf_plain['ietf-ip:ipv4']['address'][0]['ip']
+                            ipv4_subnet_mask = IPAddress(
+                                intf_plain['ietf-ip:ipv4']['address'][0]['netmask']
+                            ).netmask_bits()
+                        except KeyError:
+                            ipv4_address = ''
+                            ipv4_subnet_mask = ''
+                        interfaces_obj = DeviceInterfaces(
+                            device_id=host,
+                            name=intf_name,
+                            description=intf_desc,
+                            interface_type=intf_type,
+                            ipv4_address=ipv4_address,
+                            ipv4_subnet_mask=ipv4_subnet_mask,
+                            admin_status=intf_admin_status,
+                            oper_status=intf_oper_status,
+                            phys_address=intf_phys
+                        )
+                        interfaces_obj.save()
+                        progress.append(
+                            f'[+] DB entry {interfaces_obj.id} created for: {intf_name}'
+                        )
             return {'status': 'success'}
         else:
             return {'status': 'failure'}

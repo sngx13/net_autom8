@@ -11,7 +11,7 @@ from random import randint
 from .tasks import task_run_device_discovery
 from .tasks import task_run_device_rediscovery
 # Scripts
-from .scripts.device_interface_cfg import edit_interface
+from .scripts.device_configurator import edit_interface
 # Models
 from .models import Device, DeviceInterfaces
 from housekeeping.models import CeleryUserJobResults
