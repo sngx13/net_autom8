@@ -17,5 +17,5 @@ Celery & Redis
 
 ### How it works
 * Device List
-    ** Shows a list of devices that have been added to inventory, regadless whether thos have been discovered or not.
+    > Shows a list of devices that have been added to inventory, regadless whether thos have been discovered or not.
     
