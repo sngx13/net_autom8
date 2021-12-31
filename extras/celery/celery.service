@@ -11,7 +11,7 @@ Group=root
 
 EnvironmentFile=/etc/conf.d/celery.conf
 
-WorkingDirectory=/home/sergheigolipad/Projects/Python/net_autom8
+WorkingDirectory=/home/ubuntu/environment/net_autom8
 
 ExecStart=/bin/sh -c '${CELERY_BIN} -A $CELERY_APP multi start $CELERYD_NODES \
     --pidfile=${CELERYD_PID_FILE} --logfile=${CELERYD_LOG_FILE} \
