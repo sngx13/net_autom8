@@ -17,5 +17,10 @@ Celery & Redis
 
 ### How it works
 * Device List
-    > Shows a list of devices that have been added to inventory, regadless whether thos have been discovered or not.
-    
+    > Shows a list of devices that have been added to inventory, regadless whether those have been discovered or not.
+* Add device
+    > Adds single device to inventory, initiates SSH connections to obtain basic information (uptime, serial, model)
+    > Checks whether RESTCONF is enabled.
+* Import devides
+    > Relies of structured CSV file for import.
+    > Loops over devices and performs same checks as above (signle device discovery)
