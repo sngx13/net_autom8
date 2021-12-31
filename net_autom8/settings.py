@@ -12,7 +12,7 @@ SECRET_KEY = 'django-insecure-wxw1+m1r=_l#y2-ym673q+w_f6qep+hkjmtoohrd09!vsu5n1)
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '4716ccf12d04460aa7099cf95c40a433.vfs.cloud9.eu-west-2.amazonaws.com']
 
 
 # Application definition
@@ -123,9 +123,9 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    ('css', '/home/sngx/Projects/Python/net_autom8/static/css'),
-    ('js', '/home/sngx/Projects/Python/net_autom8/static/js'),
-    ('images', '/home/sngx/Projects/Python/net_autom8/static/images'),
+    ('css', '/home/ubuntu/environment/net_autom8/static/css'),
+    ('js', '/home/ubuntu/environment/net_autom8/static/js'),
+    ('images', '/home/ubuntu/environment/net_autom8/static/images'),
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
