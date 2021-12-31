@@ -2,6 +2,7 @@
 
 ### Powered By:
  - Django
+ - Crispy Forms
  - Bootstrap5
  - Datatables
  - Google Charts
