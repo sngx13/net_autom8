@@ -15,7 +15,6 @@
 *.tar.gz
 *.rar
 *.gz
-*.ini
 *.yaml
 *.sqlite3
 *.csv
