@@ -1,5 +1,6 @@
 # Django
 from django.contrib.auth import login, authenticate
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.contrib import messages
 # Forms
@@ -21,3 +22,12 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+
+def login_history(request):
+    context = {
+        'title': 'Authentication History',
+        'card_header': 'Authentication History',
+        'data': User.objects.all()
+    }
+    return render(request, 'registration/login_history.html', context)

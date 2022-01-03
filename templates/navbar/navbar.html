@@ -29,8 +29,8 @@
                 User Tasks</a>
             </li>
             <li><a class="dropdown-item" href="{% url 'housekeeping:housekeeping_celery_backend_tasks' %}">
-              <i class="fas fa-cogs"></i>
-              Backend Tasks</a>
+                <i class="fas fa-cogs"></i>
+                Backend Tasks</a>
             </li>
           </ul>
         </li>
@@ -46,11 +46,11 @@
                 Device List</a>
             </li>
             <li><a class="dropdown-item" href="{% url 'inventory:device_inventory_create' %}">
-              <i class="fas fa-plus-circle"></i>
-              Add Device</a></li>
+                <i class="fas fa-plus-circle"></i>
+                Add Device</a></li>
             <li><a class="dropdown-item" href="{% url 'inventory:device_inventory_import' %}">
-              <i class="fas fa-file-import"></i>
-              Import Devices</a>
+                <i class="fas fa-file-import"></i>
+                Import Devices</a>
             </li>
           </ul>
         </li>
@@ -65,6 +65,11 @@
           <li>
             <a class="dropdown-item" href="{% url 'profile' %}">
               <i class="fas fa-id-card-alt"></i> Profile
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'login_history' %}">
+              <i class="fas fa-history"></i> Logs
             </a>
           </li>
           <li>

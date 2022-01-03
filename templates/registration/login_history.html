@@ -1,0 +1,27 @@
+{% extends "base_template/base.html"%}
+{% block content %}
+{% if data %}
+<div class="table-responsive rounded">
+    <table id="users" class="table table-hover table-sm" style="width:100%">
+        <thead>
+            <tr>
+                <th><i class="fas fa-user-circle"></i> Username</th>
+                <th><i class="fas fa-signature"></i> Full Name</th>
+                <th><i class="fas fa-at"></i> Email</th>
+                <th><i class="fas fa-user-clock"></i> Last Login</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in data %}
+            <tr>
+                <td>{{ user }}</td>
+                <td>{{ user.first_name }} {{ user.last_name }}</td>
+                <td>{{ user.email|lower }}</td>
+                <td>{{ user.last_login|date:"D d M y G:i:s" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
