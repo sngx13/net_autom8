@@ -1,6 +1,7 @@
 # net_autom8 - Network Automation & Inventory Portal
 
 ### Powered By:
+ - NGINX (Gunicorn)
  - Django
  - Crispy Forms
  - Bootstrap5
@@ -11,9 +12,8 @@
 ### Job Scheduling:
 Celery & Redis
 
-### Hosted in AWS Cloud9
-(please note, link may change as it's on a dymanic IP)
-> http://ec2-35-177-161-19.eu-west-2.compute.amazonaws.com:8080
+### Hosted on Raspberry PI
+> https://netautom8.servehttp.com/
 
 ### How it works
 * Inventory
