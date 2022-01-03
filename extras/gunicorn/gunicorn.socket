@@ -1,3 +1,5 @@
+# Location /etc/systemd/system
+
 [Unit]
 Description=gunicorn socket
 
