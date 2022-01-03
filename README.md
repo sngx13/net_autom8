@@ -1,7 +1,8 @@
 # net_autom8 - Network Automation & Inventory Portal
 
 ### Powered By:
- - NGINX (Gunicorn)
+ - Nginx
+ - Gunicorn
  - Django
  - Crispy Forms
  - Bootstrap5
