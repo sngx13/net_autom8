@@ -2,10 +2,10 @@
 
 ### Powered By:
  - Nginx
- - Gunicorn
+    -- Gunicorn
  - Django
- - Crispy Forms
  - Bootstrap5
+ - Crispy Forms
  - Datatables
  - Google Charts
  - Scrapli
