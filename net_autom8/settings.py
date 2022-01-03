@@ -123,9 +123,9 @@ USE_TZ = True
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    ('css', '/home/ubuntu/environment/net_autom8/static/css'),
-    ('js', '/home/ubuntu/environment/net_autom8/static/js'),
-    ('images', '/home/ubuntu/environment/net_autom8/static/images'),
+    ('css', '/opt/apps/net_autom8/static/css'),
+    ('js', '/opt/apps/net_autom8/static/js'),
+    ('images', '/opt/apps/net_autom8/static/images'),
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
