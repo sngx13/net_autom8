@@ -2,7 +2,7 @@
 
 ### Powered By:
  - Nginx
-    -- Gunicorn
+ - Gunicorn
  - Django
  - Bootstrap5
  - Crispy Forms
