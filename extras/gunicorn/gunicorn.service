@@ -1,0 +1,18 @@
+[Unit]
+Description=gunicorn daemon
+Requires=gunicorn.socket
+After=network.target
+
+[Service]
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/apps/net_autom8
+ExecStart=/usr/local/bin/gunicorn \
+          --access-logfile - \
+          --workers 5 \
+          --threads 3 \
+          --bind unix:/run/gunicorn.sock \
+          net_autom8.wsgi:application
+
+[Install]
+WantedBy=multi-user.target
