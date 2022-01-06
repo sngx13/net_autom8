@@ -1,3 +1,4 @@
+from datetime import date
 # Django
 from django.utils import timezone
 # Celery
@@ -94,3 +95,25 @@ def task_periodic_device_poll(self):
         )
         task_add_to_db.save()
         return {'status': 'rejected', 'details': ['Inventory is empty']}
+
+
+@shared_task(bind=True, track_started=True)
+def task_cleanup_backend_db(self):
+    progress = []
+    date_today = date.today().isoformat()
+    if CeleryBackendJobResults.objects.all():
+        task_add_to_db = CeleryBackendJobResults(
+            task_id=self.request.id,
+            task_name = 'task_cleanup_backend_db',
+            task_requested_by='CRON',
+            start_time=timezone.now()
+        )
+        task_add_to_db.save()
+        for task in CeleryBackendJobResults.objects.all():
+            if date_today not in str(task.start_time):
+                if task.delete():
+                    progress.append(
+                        f'[+] Deleting: {task.id}'
+                    )
+        self.update_state(state=states.SUCCESS, meta=progress)
+    return {'status': 'success', 'details': progress}

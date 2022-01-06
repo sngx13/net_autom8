@@ -109,7 +109,6 @@ def rest_interface_info(host, http_client):
                             ipv4_subnet_mask = IPAddress(
                                 intf_plain['ietf-ip:ipv4']['address'][0]['netmask']
                             ).netmask_bits()
-                            print(ipv4_address, ipv4_subnet_mask)
                         if not intf_plain['ietf-ip:ipv4']:
                             ipv4_address = ''
                             ipv4_subnet_mask = ''
@@ -129,7 +128,6 @@ def rest_interface_info(host, http_client):
                             phys_address=intf_phys
                         )
                         interfaces_obj.save()
-                        # print(f'Plain: {intf_plain} State: {intf_state}')
                         progress.append(
                             f'[+] DB entry {interfaces_obj.id} created for: {intf_name}'
                         )
@@ -137,7 +135,6 @@ def rest_interface_info(host, http_client):
         else:
             return {'status': 'failure'}
     except Exception as error:
-        print(error)
         return {'status': 'error', 'details': str(error)}
 
 
