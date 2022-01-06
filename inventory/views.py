@@ -8,10 +8,13 @@ from django.utils import timezone
 # Other
 from random import randint
 # Tasks
-from .tasks import task_run_device_discovery
-from .tasks import task_run_device_rediscovery
+# from .tasks import task_run_device_discovery
+# from .tasks import task_run_device_rediscovery
+from tasks.tasks import task_run_device_discovery
+from tasks.tasks import task_run_device_rediscovery
 # Scripts
-from .scripts.device_configurator import edit_interface, delete_interface
+# from .scripts.device_configurator import edit_interface, delete_interface
+from tasks.scripts.device_configurator import edit_interface, delete_interface
 # Models
 from .models import Device, DeviceInterfaces
 from housekeeping.models import CeleryUserJobResults

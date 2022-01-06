@@ -11,24 +11,28 @@
         {% endfor %}
         <li>
             <i class="far fa-calendar-check"></i> Registered Tasks:
-                {% for task in data.celery_information.registered_tasks %}
-                <ul><li>{{ task }}</li></ul>
-                {% endfor %}
+            {% for task in data.celery_information.registered_tasks %}
+            <ul>
+                <li>{{ task }}</li>
+            </ul>
+            {% endfor %}
         </li>
         <li>
             <i class="fas fa-tasks"></i> Scheduled Tasks:
             {% for task in data.celery_information.scheduled_tasks %}
-                <ul><li>{{ task }}</li></ul>
+            <ul>
+                <li>{{ task }}</li>
+            </ul>
             {% endfor %}
         </li>
         <li>
             <i class="fas fa-hammer"></i> Active Tasks:
             {% for task in data.celery_information.active_tasks %}
-                <ul>
-                    <li>Task ID: {{ task.id }}</li>
-                    <li>Task Name: {{ task.name }}</li>
-                    <li>Worker PID: {{ task.worker_pid }}</li>
-                </ul>
+            <ul>
+                <li>Task ID: {{ task.id }}</li>
+                <li>Task Name: {{ task.name }}</li>
+                <li>Worker PID: {{ task.worker_pid }}</li>
+            </ul>
             {% endfor %}
         </li>
     </ul>
@@ -37,7 +41,8 @@
 {% if data.tasks_list %}
 <div class="col-md-12">
     <div class="table-responsive rounded">
-        <table id="celery_completed_tasks" class="table table-hover table-sm" style="width:100%">
+        <table id="celery_completed_tasks" class="table table-hover table-sm" data-order='[[ 5, "dsc" ]]'
+            data-page-length="20" style="width:100%">
             <thead>
                 <tr>
                     <th><i class="fas fa-barcode"></i> Task ID</th>
@@ -55,48 +60,52 @@
                     <td>{{ completed_task.task_name }}</td>
                     <td>
                         {% if 'SUCCESS' in completed_task.task_status %}
-                            <span class="badge bg-success">{{ completed_task.task_status }}</span>
+                        <span class="badge bg-success">{{ completed_task.task_status }}</span>
                         {% else %}
-                            <span class="badge bg-danger">{{ completed_task.task_status }}</span>
+                        <span class="badge bg-danger">{{ completed_task.task_status }}</span>
                         {% endif %}
                     </td>
                     <td>
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#task_result_modal_{{ completed_task.task_id }}">
+                        <a href="#" data-bs-toggle="modal"
+                            data-bs-target="#task_result_modal_{{ completed_task.task_id }}">
                             <i class="fas fa-info-circle"></i>
                         </a>
                         <div class="modal fade" id="task_result_modal_{{ completed_task.task_id }}" tabindex="-1">
                             <div class="modal-dialog modal-xl">
                                 <div class="modal-content">
-                                  <div class="modal-header">
-                                    <h5 class="modal-title">Task Result - Information</h5>
-                                  </div>
-                                  <div class="modal-body">
-                                    <ul>
-                                        <li>
-                                            Result:
-                                            {% if 'success' in completed_task.task_result.status %}
-                                                <span class="badge bg-success">{{ completed_task.task_result.status|upper }}</span>
-                                            {% else %}
-                                                <span class="badge bg-danger">{{ completed_task.task_result.status|upper }}</span>
-                                            {% endif %}
-                                        </li>
-                                        <li>
-                                            Details:
-                                            <ul>
-                                                {% if completed_task.task_result.details|length > 1 %}
-                                                    {% for detail in completed_task.task_result.details %}
-                                                        <li>{{ detail }}</li>
-                                                    {% endfor %}
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Task Result - Information</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <ul>
+                                            <li>
+                                                Result:
+                                                {% if 'success' in completed_task.task_result.status %}
+                                                <span class="badge bg-success">{{
+                                                    completed_task.task_result.status|upper }}</span>
                                                 {% else %}
-                                                    {{ completed_task.task_result.details }}
+                                                <span class="badge bg-danger">{{ completed_task.task_result.status|upper
+                                                    }}</span>
                                                 {% endif %}
-                                            </ul>
-                                        </li>
-                                    </ul>
-                                  </div>
-                                  <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                  </div>
+                                            </li>
+                                            <li>
+                                                Details:
+                                                <ul>
+                                                    {% if completed_task.task_result.details|length > 1 %}
+                                                    {% for detail in completed_task.task_result.details %}
+                                                    <li>{{ detail }}</li>
+                                                    {% endfor %}
+                                                    {% else %}
+                                                    {{ completed_task.task_result.details }}
+                                                    {% endif %}
+                                                </ul>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary"
+                                            data-bs-dismiss="modal">Close</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -111,3 +120,42 @@
 </div>
 {% endif %}
 {% endblock %}
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        $('#celery_completed_tasks').DataTable(
+            {
+                renderer: 'bootstrap',
+                select: false,
+                fixedColumns: true,
+                responsive: true,
+                ordering: true,
+                dom: '<"top"B>rt<"bottom"iflp><"clear">',
+                lengthMenu: [20, 50, 75, 100, 200, 300, 400, 500],
+                buttons: [
+                    {
+                        'extend': 'copy',
+                        'text': 'Copy',
+                        'className': 'btn btn-xs btn-outline-dark'
+                    },
+                    {
+                        'extend': 'csv',
+                        'text': 'CSV',
+                        'className': 'btn btn-xs btn-outline-dark'
+                    },
+                    {
+                        'extend': 'excel',
+                        'text': 'MS Excel',
+                        'className': 'btn btn-xs btn-outline-dark'
+                    },
+                    {
+                        'extend': 'pdf',
+                        'text': 'PDF',
+                        'className': 'btn btn-xs btn-outline-dark'
+                    }
+                ]
+            }
+        );
+    });
+</script>
+{% endblock javascript %}

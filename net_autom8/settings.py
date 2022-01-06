@@ -14,6 +14,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 # Application definition
 
@@ -30,7 +31,8 @@ INSTALLED_APPS = [
     'accounts',
     'dashboard',
     'inventory',
-    'housekeeping'
+    'housekeeping',
+    'tasks'
 ]
 
 MIDDLEWARE = [

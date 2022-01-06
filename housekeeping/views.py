@@ -12,8 +12,6 @@ tasks = current_app.control.inspect([hostname])
 
 
 def housekeeping_celery_user_tasks(request):
-    # hostname = 'celery@' + str(gethostname())
-    # tasks = current_app.control.inspect([hostname])
     tasks_list = CeleryUserJobResults.objects.all().order_by('-start_time')
     context = {
             'title': 'Housekeeping - Celery User Tasks',
