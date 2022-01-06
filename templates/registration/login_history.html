@@ -25,13 +25,13 @@
     </table>
 </div>
 {% endif %}
-<div class="row my-5">
-    <h5>
+<div class="row justify-content-center my-5">
+    <h6>
         <i class="fas fa-eye"></i>
         Unique site visitors:
-    </h5>
+    </h6>
     {% for ip, location in visitors.items %}
-    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+    <div class="toast col-sm-1" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
         <div class="toast-header">
             <img src="https://flagcdn.com/w20/{{ location | lower }}.png" class="rounded me-2">
             <strong class="me-auto">
