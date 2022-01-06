@@ -1,4 +1,5 @@
 {% extends "base_template/base.html"%}
+{% load static %}
 {% block content %}
 {% if data %}
 <div class="table-responsive rounded">
@@ -24,4 +25,28 @@
     </table>
 </div>
 {% endif %}
+<div class="row my-5">
+    <h5>
+        <i class="fas fa-eye"></i>
+        Unique site visitors:
+    </h5>
+    {% for ip, location in visitors.items %}
+    <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+        <div class="toast-header">
+            <img src="https://flagcdn.com/w20/{{ location | lower }}.png" class="rounded me-2">
+            <strong class="me-auto">
+                <a class="text-decoration-none" href="https://www.abuseipdb.com/check/{{ ip }}" target="#">{{ ip }}</a>
+            </strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        $(".toast").toast('show');
+    });
+</script>
+{% endblock javascript %}
