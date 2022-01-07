@@ -99,6 +99,7 @@ def task_periodic_device_poll(self):
 
 @shared_task(bind=True, track_started=True)
 def task_cleanup_backend_db(self):
+    task_result = {}
     progress = []
     date_today = date.today().isoformat()
     if CeleryBackendJobResults.objects.all():
@@ -113,7 +114,21 @@ def task_cleanup_backend_db(self):
             if date_today not in str(task.start_time):
                 if task.delete():
                     progress.append(
-                        f'[+] Deleting: {task.id}'
+                        f'[+] Deleting: {task.pk} as these are now obsolete'
                     )
-        self.update_state(state=states.SUCCESS, meta=progress)
-    return {'status': 'success', 'details': progress}
+            else:
+                progress.append(
+                    f'[+] Keeping {task.pk} as these contain todays date'
+                )
+        task_result.update(
+            {
+                'status': 'success',
+                'details': progress,
+                'message': 'DB Cleanup completed successfully'
+            }
+        )
+        task_add_to_db.task_status = 'SUCCESS'
+        task_add_to_db.task_result = task_result
+        self.update_state(state=states.SUCCESS, meta=task_result)
+        task_add_to_db.save()
+        return task_result

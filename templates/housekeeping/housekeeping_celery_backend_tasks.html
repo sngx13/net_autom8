@@ -41,8 +41,7 @@
 {% if data.tasks_list %}
 <div class="col-md-12">
     <div class="table-responsive rounded">
-        <table id="celery_completed_tasks" class="table table-hover table-sm" data-order='[[ 5, "dsc" ]]'
-            data-page-length="20" style="width:100%">
+        <table id="celery_completed_tasks" class="table table-hover table-sm" data-order='[[ 5, "dsc" ]]' data-page-length="20" style="width:100%">
             <thead>
                 <tr>
                     <th><i class="fas fa-barcode"></i> Task ID</th>
@@ -66,8 +65,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <a href="#" data-bs-toggle="modal"
-                            data-bs-target="#task_result_modal_{{ completed_task.task_id }}">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#task_result_modal_{{ completed_task.task_id }}">
                             <i class="fas fa-info-circle"></i>
                         </a>
                         <div class="modal fade" id="task_result_modal_{{ completed_task.task_id }}" tabindex="-1">
@@ -81,11 +79,9 @@
                                             <li>
                                                 Result:
                                                 {% if 'success' in completed_task.task_result.status %}
-                                                <span class="badge bg-success">{{
-                                                    completed_task.task_result.status|upper }}</span>
+                                                <span class="badge bg-success">{{ completed_task.task_result.status|upper }}</span>
                                                 {% else %}
-                                                <span class="badge bg-danger">{{ completed_task.task_result.status|upper
-                                                    }}</span>
+                                                <span class="badge bg-danger">{{ completed_task.task_result.status|upper }}</span>
                                                 {% endif %}
                                             </li>
                                             <li>
@@ -103,8 +99,7 @@
                                         </ul>
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>
