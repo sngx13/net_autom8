@@ -38,7 +38,7 @@ def task_run_device_discovery(self):
 def task_run_device_rediscovery(self, device_id):
     run_task = device_initiate_discovery(device_id)
     task_update_db = CeleryUserJobResults.objects.get(
-        task_id=self.request.id
+        task_id = self.request.id
     )
     task_update_db.task_name = self.name
     task_result = AsyncResult(self.request.id)
@@ -60,13 +60,13 @@ def task_periodic_device_poll(self):
     if Device.objects.all():
         run_task = device_initiate_poller()
         task_add_to_db = CeleryBackendJobResults(
-                    task_id=self.request.id,
-                    task_requested_by='periodic_device_poll_script',
-                    start_time=timezone.now()
+                    task_id = self.request.id,
+                    task_requested_by = 'periodic_device_poll_script',
+                    start_time = timezone.now()
         )
         task_add_to_db.save()
         task_update_db = CeleryBackendJobResults.objects.get(
-            task_id=self.request.id
+            task_id = self.request.id
         )
         task_update_db.task_name = self.name
         task_result = AsyncResult(self.request.id)
@@ -83,15 +83,15 @@ def task_periodic_device_poll(self):
         return run_task
     else:
         task_add_to_db = CeleryBackendJobResults(
-            task_id=self.request.id,
-            task_name=self.name,
-            task_result={
+            task_id = self.request.id,
+            task_name = self.name,
+            task_result = {
                 'status': 'rejected',
                 'details': ['Inventory is empty']
             },
-            task_status='REJECTED',
-            task_requested_by='periodic_device_poll_script',
-            start_time=timezone.now()
+            task_status = 'REJECTED',
+            task_requested_by = 'periodic_device_poll_script',
+            start_time = timezone.now()
         )
         task_add_to_db.save()
         return {'status': 'rejected', 'details': ['Inventory is empty']}
@@ -106,7 +106,7 @@ def task_cleanup_backend_db(self):
         task_add_to_db = CeleryBackendJobResults(
             task_id=self.request.id,
             task_name = 'task_cleanup_backend_db',
-            task_requested_by='CRON',
+            task_requested_by = 'CRON',
             start_time=timezone.now()
         )
         task_add_to_db.save()
