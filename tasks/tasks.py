@@ -132,3 +132,17 @@ def task_cleanup_backend_db(self):
         self.update_state(state=states.SUCCESS, meta=task_result)
         task_add_to_db.save()
         return task_result
+    else:
+        task_add_to_db = CeleryBackendJobResults(
+            task_id = self.request.id,
+            task_name = task_cleanup_backend_db,
+            task_result = {
+                'status': 'rejected',
+                'details': ['CeleryBackendJobResultsDB does not exist']
+            },
+            task_status = 'REJECTED',
+            task_requested_by = 'CRON',
+            start_time = timezone.now()
+        )
+        task_add_to_db.save()
+        return {'status': 'rejected', 'details': ['CeleryBackendJobResultsDB does not exist']}
