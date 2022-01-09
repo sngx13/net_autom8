@@ -116,7 +116,7 @@ def task_cleanup_backend_db(self):
                     progress.append(
                         f'[+] Deleting: {task.pk} as these are now obsolete'
                     )
-            else:
+            elif date_today in str(task.start_time):
                 progress.append(
                     f'[+] Keeping {task.pk} as these contain todays date'
                 )
@@ -141,7 +141,7 @@ def task_cleanup_backend_db(self):
                 'details': ['CeleryBackendJobResultsDB does not exist']
             },
             task_status = 'REJECTED',
-            task_requested_by = 'CRON',
+            task_requested_by = 'Periodic CRON task',
             start_time = timezone.now()
         )
         task_add_to_db.save()

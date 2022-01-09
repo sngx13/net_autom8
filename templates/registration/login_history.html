@@ -28,7 +28,8 @@
 <div class="row justify-content-center my-5">
     <h6>
         <i class="fas fa-eye"></i>
-        Unique site visitors:
+        Unique site visitors
+        <span class="badge bg-primary">{{ visitors | length }}</span>
     </h6>
     {% for ip, location in visitors.items %}
     <div class="toast col-sm-1" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
