@@ -1,0 +1,82 @@
+{% extends "base_template/base.html"%}
+{% load static %}
+{% block content %}
+{% if data %}
+<div class="table-responsive rounded">
+    <table id="security_log" class="table table-hover table-sm" data-order='[[ 3, "asc" ]]' style="width:100%">
+        <thead>
+            <tr>
+                <th><i class="fas fa-at"></i> IP Address</th>
+                <th><i class="fas fa-signature"></i> Hostname</th>
+                <th><i class="fas fa-user-secret"></i> Recent Abuse</th>
+                <th><i class="fas fa-star"></i> Score</th>
+                <th><i class="fas fa-link"></i> ISP</th>
+                <th><i class="fas fa-city"></i> City</th>
+                <th><i class="fas fa-globe"></i> Country</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for visitor in data %}
+            <tr>
+                <td>
+                    <a href="https://www.abuseipdb.com/check/{{ visitor.ip_address }}" class="text-decoration-none" target="#">
+                        {{ visitor.ip_address }}
+                    </a>
+                </td>
+                <td>{{ visitor.hostname }}</td>
+                {% if visitor.recent_abuse %}
+                <td><span class="badge bg-danger">{{ visitor.recent_abuse }}</span></td>
+                {% else %}
+                <td><span class="badge bg-success">{{ visitor.recent_abuse }}</span></td>
+                {% endif %}
+                <td>{{ visitor.fraud_score }}</td>
+                <td>{{ visitor.provider }} - ASN {{ visitor.bgp_asn }}</td>
+                <td>{{ visitor.city }}</td>
+                <td><img src="https://flagcdn.com/16x12/{{ visitor.country_code | lower }}.png" /></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}
+{% block javascript %}
+<script>
+    $(document).ready(function () {
+        $('#security_log').DataTable(
+            {
+                renderer: 'bootstrap',
+                select: false,
+                fixedColumns: true,
+                responsive: true,
+                ordering: true,
+                dom: '<"top"B>rt<"bottom"iflp><"clear">',
+                lengthMenu: [20, 50, 75, 100, 200, 300, 400, 500],
+                buttons: [
+                    {
+                        'extend': 'copy',
+                        'text': 'Copy',
+                        'className': 'btn btn-xs btn-outline-dark'
+                    },
+                    {
+                        'extend': 'csv',
+                        'text': 'CSV',
+                        'className': 'btn btn-xs btn-outline-dark'
+                    },
+                    {
+                        'extend': 'excel',
+                        'text': 'MS Excel',
+                        'className': 'btn btn-xs btn-outline-dark'
+                    },
+                    {
+                        'extend': 'pdf',
+                        'text': 'PDF',
+                        'className': 'btn btn-xs btn-outline-dark'
+                    }
+                ]
+            }
+        );
+    });
+</script>
+{% endblock javascript %}
+

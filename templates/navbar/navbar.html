@@ -5,8 +5,7 @@
     <a class="navbar-brand" href="#">
       <img class="rounded" src="{% static 'images/logos/portal_logo.png' %}" width="115" height="40">
     </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-      aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -18,33 +17,28 @@
           </a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-dark" href="#" id="HousekeepingDropdown" role="button"
-            data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle text-dark" href="#" id="HousekeepingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fas fa-quidditch"></i>
             Housekeeping
           </a>
           <ul class="dropdown-menu" aria-labelledby="HousekeepingDropdown">
-            <li><a class="dropdown-item" href="{% url 'housekeeping:housekeeping_celery_user_tasks' %}"
-                onclick="spinner_toggle_on()">
+            <li><a class="dropdown-item" href="{% url 'housekeeping:housekeeping_celery_user_tasks' %}" onclick="spinner_toggle_on()">
                 <i class="fas fa-users-cog"></i>
                 User Tasks</a>
             </li>
-            <li><a class="dropdown-item" href="{% url 'housekeeping:housekeeping_celery_backend_tasks' %}"
-                onclick="spinner_toggle_on()">
+            <li><a class="dropdown-item" href="{% url 'housekeeping:housekeeping_celery_backend_tasks' %}" onclick="spinner_toggle_on()">
                 <i class="fas fa-cogs"></i>
                 Backend Tasks</a>
             </li>
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle text-dark" href="#" id="InventoryDropdown" role="button"
-            data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle text-dark" href="#" id="InventoryDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fas fa-boxes"></i>
             Inventory
           </a>
           <ul class="dropdown-menu" aria-labelledby="InventoryDropdown">
-            <li><a class="dropdown-item" href="{% url 'inventory:device_inventory_list' %}"
-                onclick="spinner_toggle_on()">
+            <li><a class="dropdown-item" href="{% url 'inventory:device_inventory_list' %}" onclick="spinner_toggle_on()">
                 <i class="fas fa-list-ul"></i>
                 Device List</a>
             </li>
@@ -59,8 +53,7 @@
         </li>
       </ul>
       <div class="dropdown">
-        <a class="btn btn-sm btn-success dropdown-toggle" href="#" role="button" id="UserProfileDropdown"
-          data-bs-toggle="dropdown" aria-expanded="false">
+        <a class="btn btn-sm btn-success dropdown-toggle" href="#" role="button" id="UserProfileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
           <i class="fas fa-user-circle"></i>
           {{ user.username }}
         </a>
@@ -73,6 +66,11 @@
           <li>
             <a class="dropdown-item" href="{% url 'login_history' %}" onclick="spinner_toggle_on()">
               <i class="fas fa-history"></i> Logs
+            </a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="{% url 'security_log' %}" onclick="spinner_toggle_on()">
+              <i class="fas fa-shield-alt"></i> Security
             </a>
           </li>
           <li>

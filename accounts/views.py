@@ -5,6 +5,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 # Forms
 from .forms import SignUpForm
+# Models
+from net_autom8.models import ExternalVisitorsInfo
 
 
 def signup(request):
@@ -31,3 +33,12 @@ def login_history(request):
         'data': User.objects.all()
     }
     return render(request, 'registration/login_history.html', context)
+
+
+def security_log(request):
+    context = {
+        'title': 'NGINX Security Log',
+        'card_header': 'NGINX Security Log',
+        'data': ExternalVisitorsInfo.objects.all()
+    }
+    return render(request, 'registration/security_log.html', context)
