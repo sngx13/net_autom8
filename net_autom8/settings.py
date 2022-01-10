@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'crispy_forms',
     'crispy_bootstrap5',
+    'net_autom8',
     'accounts',
     'dashboard',
     'inventory',

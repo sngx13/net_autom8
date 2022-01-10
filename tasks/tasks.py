@@ -7,6 +7,7 @@ from celery.result import AsyncResult
 # Scrips
 from .scripts.device_discovery import device_initiate_discovery
 from .scripts.device_poller import device_initiate_poller
+from .scripts.nginx_access_log import get_nginx_access_hits
 # Models
 from housekeeping.models import CeleryUserJobResults
 from housekeeping.models import CeleryBackendJobResults
@@ -146,3 +147,30 @@ def task_cleanup_backend_db(self):
         )
         task_add_to_db.save()
         return {'status': 'rejected', 'details': ['CeleryBackendJobResultsDB does not exist']}
+
+
+@shared_task(bind=True, track_started=True)
+def task_nginx_log_parser(self):
+    run_task = get_nginx_access_hits()
+    task_add_to_db = CeleryBackendJobResults(
+        task_id = self.request.id,
+        task_requested_by = 'Periodic CRON task',
+        start_time = timezone.now()
+    )
+    task_add_to_db.save()
+    task_update_db = CeleryBackendJobResults.objects.get(
+        task_id = self.request.id
+    )
+    task_update_db.task_name = self.name
+    task_result = AsyncResult(self.request.id)
+    if run_task['status'] == 'success':
+        self.update_state(state=states.SUCCESS, meta=run_task)
+        task_update_db.task_result = task_result.info
+        task_update_db.task_status = task_result.status
+        task_update_db.save()
+    else:
+        self.update_state(state=states.FAILURE)
+        task_update_db.task_result = run_task
+        task_update_db.task_status = 'FAILURE'
+        task_update_db.save()
+    return run_task
