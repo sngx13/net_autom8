@@ -40,6 +40,11 @@ def get_nginx_access_hits():
                 )
                 print(f'[+] Writing new {ip} to ExternalVisitorsInfoDB')
                 external_user_info.save()
+            else:
+                progress.append(
+                    f'[+] Received: HTTP/{get_geo_info.status_code} most likely due to limit being reached'
+                )
+                return {'status': 'failure', 'details': progress, 'message': 'API Limit was reached'}
         else:
             progress.append(
                 f'[+] Following: {ip} is already in ExternalVisitorsInfoDB'
