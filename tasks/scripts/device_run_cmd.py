@@ -47,9 +47,9 @@ def cli_command_runner(device_id, command):
                 progress.append(
                     f'[+] Discovering: {host.hostname}@{host.mgmt_ip}'
                 )
-                version_cmd = conn.send_command(command)
-                output = version_cmd.textfsm_parse_output()
-                return {'status': 'success', 'details': output}
+                unformated_output = conn.send_command(command)
+                formated_output = unformated_output.textfsm_parse_output()
+                return {'status': 'success', 'details': formated_output}
         except ScrapliException:
             progress.append(
                 f'[+] Unable to connect to: {host.hostname}'

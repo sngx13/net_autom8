@@ -265,12 +265,17 @@ def device_run_command(request):
         command_id = post_data.split(':')[1]
         commands = {
             '1': 'show ip interface brief',
-            '2': 'show version'
+            '2': 'show ip arp',
+            '3': 'show ip route',
+            '4': 'show version'
         }
         command = commands.get(command_id)
         output = cli_command_runner(device_id, command)
-        return JsonResponse(
-            output,
-            safe=False,
-            json_dumps_params={'indent': 4}
-        )
+        if output['status'] == 'success':
+            return JsonResponse(
+                output,
+                safe=False,
+                json_dumps_params={'indent': 4}
+            )
+        else:
+            return 'Unable to get output from device...'
