@@ -88,4 +88,23 @@
         </div>
     </div>
 </div>
+<form method="POST" action="{% url 'inventory:device_run_command' %}">
+{% csrf_token %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="input-group mb-3">
+            <label class="input-group-text">Run Command</label>
+            <select class="form-select" name="run_show_command" id="run_show_command">
+                <option selected disabled>Choose...</option>
+                <option value="{{ data.version.id }}:1">show ip interface brief</option>
+                <option value="{{ data.version.id }}:2">show version</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-sm btn-primary">
+            <i class="fas fa-plus-circle"></i>
+            Run
+        </button>
+    </div>
+</div>
+</form>
 {% endblock %}

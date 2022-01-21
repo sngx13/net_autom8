@@ -3,18 +3,17 @@ import pandas as pd
 # Django
 from django.shortcuts import render
 from django.contrib import messages
+from django.http import JsonResponse, HttpRequest
 from django.http.response import HttpResponseRedirect
 from django.utils import timezone
 # Other
 from random import randint
 # Tasks
-# from .tasks import task_run_device_discovery
-# from .tasks import task_run_device_rediscovery
 from tasks.tasks import task_run_device_discovery
 from tasks.tasks import task_run_device_rediscovery
 # Scripts
-# from .scripts.device_configurator import edit_interface, delete_interface
 from tasks.scripts.device_configurator import edit_interface, delete_interface
+from tasks.scripts.device_run_cmd import cli_command_runner
 # Models
 from .models import Device, DeviceInterfaces
 from housekeeping.models import CeleryUserJobResults
@@ -257,3 +256,21 @@ def device_inventory_list(request):
         'data': list_of_devices,
     }
     return render(request, 'inventory/device_inventory_list.html', context)
+
+
+def device_run_command(request):
+    if request.method == 'POST':
+        post_data = request.POST.get('run_show_command')
+        device_id = post_data.split(':')[0]
+        command_id = post_data.split(':')[1]
+        commands = {
+            '1': 'show ip interface brief',
+            '2': 'show version'
+        }
+        command = commands.get(command_id)
+        output = cli_command_runner(device_id, command)
+        return JsonResponse(
+            output,
+            safe=False,
+            json_dumps_params={'indent': 4}
+        )

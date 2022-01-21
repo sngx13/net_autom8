@@ -50,4 +50,9 @@ urlpatterns = [
         login_required(views.device_inventory_delete),
         name='device_inventory_delete'
     ),
+    path(
+        'device_run_command',
+        login_required(views.device_run_command),
+        name='device_run_command'
+    )
 ]
