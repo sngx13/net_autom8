@@ -267,13 +267,14 @@ def device_run_command(request):
             '1': 'show ip interface brief',
             '2': 'show ip arp',
             '3': 'show ip route',
-            '4': 'show version'
+            '4': 'show ip cef',
+            '5': 'show version'
         }
         command = commands.get(command_id)
         output = cli_command_runner(device_id, command)
         if output['status'] == 'success':
             return JsonResponse(
-                output,
+                output['details'],
                 safe=False,
                 json_dumps_params={'indent': 4}
             )

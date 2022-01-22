@@ -88,7 +88,7 @@
         </div>
     </div>
 </div>
-<form hx-post="{% url 'inventory:device_run_command' %}" hx-target="#command_output" hx-swap="outerHTML">
+<form>
 {% csrf_token %}
 <div class="row">
     <div class="col-md-3">
@@ -99,15 +99,23 @@
                 <option value="{{ data.version.id }}:1">show ip interface brief</option>
                 <option value="{{ data.version.id }}:2">show ip arp</option>
                 <option value="{{ data.version.id }}:3">show ip route</option>
-                <option value="{{ data.version.id }}:4">show version</option>
+                <option value="{{ data.version.id }}:4">show ip cef</option>
+                <option value="{{ data.version.id }}:5">show version</option>
             </select>
-            <button type="submit" class="btn btn-sm btn-secondary">
+            <button type="submit" class="btn btn-sm btn-secondary" hx-indicator="#loader" hx-post="{% url 'inventory:device_run_command' %}" hx-target="#command_output" nunjucks-template="my-nunjucks-template">
                 <i class="fas fa-terminal"></i>
                     Run
             </button>
         </div>
     </div>
-    <div class="col-md-4 mt-3" id="command_output"></div>
+    <div class="col-md-4" hx-ext="client-side-templates" id="command_output">
+        <img class="htmx-indicator" src="https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/images/bx_loader.gif" id="loader"/>
+    </div>
+    <template id="my-nunjucks-template">
+        {% for data in dataset %}
+            {{ data.intf }}
+        {% endfor %}
+    </template>
 </div>
 </form>
 {% endblock %}
