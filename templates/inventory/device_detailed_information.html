@@ -1,7 +1,8 @@
 {% extends "base_template/base.html"%}
+{% load static %}
 {% block content %}
 <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card">
             <div class="card-body">
                 <ul class="list-group">
@@ -25,7 +26,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8">
         <div class="card">
             <div class="card-body">
                 <div class="table-responsive rounded">
@@ -88,34 +89,39 @@
         </div>
     </div>
 </div>
-<form>
-{% csrf_token %}
 <div class="row">
-    <div class="col-md-3">
-        <div class="input-group mb-3">
-            <label class="input-group-text">Command</label>
-            <select class="form-select" name="run_show_command" id="run_show_command">
-                <option selected disabled>Choose...</option>
-                <option value="{{ data.version.id }}:1">show ip interface brief</option>
-                <option value="{{ data.version.id }}:2">show ip arp</option>
-                <option value="{{ data.version.id }}:3">show ip route</option>
-                <option value="{{ data.version.id }}:4">show ip cef</option>
-                <option value="{{ data.version.id }}:5">show version</option>
-            </select>
-            <button type="submit" class="btn btn-sm btn-secondary" hx-indicator="#loader" hx-post="{% url 'inventory:device_run_command' %}" hx-target="#command_output" nunjucks-template="my-nunjucks-template">
-                <i class="fas fa-terminal"></i>
-                    Run
-            </button>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form>
+                {% csrf_token %}
+                    <div class="input-group mb-3">
+                        <label class="input-group-text">Command</label>
+                        <select class="form-select" name="run_show_command" id="run_show_command">
+                            <option selected disabled>Choose...</option>
+                            <option value="{{ data.version.id }}:1">show ip interface brief</option>
+                            <option value="{{ data.version.id }}:2">show ip arp</option>
+                            <option value="{{ data.version.id }}:3">show ip route</option>
+                            <option value="{{ data.version.id }}:4">show ip cef</option>
+                            <option value="{{ data.version.id }}:5">show version</option>
+                        </select>
+                        <button type="submit" class="btn btn-sm btn-success" hx-post="{% url 'inventory:device_run_command' %}" hx-target="#command_output" mustache-template="m_template" hx-indicator="#loader_bars">
+                            <i class="fas fa-terminal"></i> Run
+                        </button>
+                    </div>
+                </form>
+                <div class="d-flex justify-content-center" hx-ext="client-side-templates" hx-trigger="load" id="command_output">
+                    <img id="loader_bars" class="htmx-indicator" alt="Loading..." src="{% static 'images/loaders/bars.svg' %}"/>
+                    <template id="m_template" type="text/mustache">
+                        {% for data in dataset %}
+                        {% for key, value in data.items %}
+                            <li>{{ key }} {{ value }}</li>
+                        {% endfor %}
+                        {% endfor %}
+                    </template>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="col-md-4" hx-ext="client-side-templates" id="command_output">
-        <img class="htmx-indicator" src="https://cdnjs.cloudflare.com/ajax/libs/bxslider/4.2.5/images/bx_loader.gif" id="loader"/>
-    </div>
-    <template id="my-nunjucks-template">
-        {% for data in dataset %}
-            {{ data.intf }}
-        {% endfor %}
-    </template>
 </div>
-</form>
 {% endblock %}
