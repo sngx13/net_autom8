@@ -265,10 +265,11 @@ def device_run_command(request):
         command_id = post_data.split(':')[1]
         commands = {
             '1': 'show ip interface brief',
-            '2': 'show ip arp',
-            '3': 'show ip route',
-            '4': 'show ip cef',
-            '5': 'show version'
+            '2': 'show interfaces description',
+            '3': 'show ip arp',
+            '4': 'show ip route',
+            '5': 'show ip cef',
+            '6': 'show version'
         }
         command = commands.get(command_id)
         output = cli_command_runner(device_id, command)
