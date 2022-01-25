@@ -106,35 +106,26 @@
                             <option value="{{ data.version.id }}:5">show ip cef</option>
                             <option value="{{ data.version.id }}:6">show version</option>
                         </select>
-                        <button type="submit" class="btn btn-sm btn-success" hx-post="{% url 'inventory:device_run_command' %}" hx-target="#command_output" hx-indicator="#loader_bars" nunjucks-template="cmd_output_template">
+                        <button type="button" class="btn btn-sm btn-success" hx-post="{% url 'inventory:device_run_command' %}" hx-target="#command_output" hx-indicator="#loader_bars" nunjucks-template="template_of_cmd_output">
                             <i class="fas fa-terminal"></i> Run
                         </button>
                     </div>
                 </form>
                 <div class="d-flex justify-content-center">
-                    <div id="command_output">
-                        <img id="loader_bars" class="htmx-indicator" alt="Loading..." src="{% static 'images/loaders/bars.svg' %}"/>
-                    </div>
+                    <img id="loader_bars" class="htmx-indicator" alt="Loading..." src="{% static 'images/loaders/bars.svg' %}"/>
                 </div>
-                <template id="cmd_output_template">
-                    <ul>
+                <div id="command_output"></div>
+                <template id="template_of_cmd_output">
+                    {% verbatim %}
                         {% for item in items %}
                             {% for key, value in item %}
-                                <li>{{ key }} {{ value }}</li>
+                                {{ value }}<br>
                             {% endfor %}
                         {% endfor %}
-                    </ul>
+                    {% endverbatim %}
                 </template>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
-{% block javascript %}
-<!-- HTMX -->
-<script src="https://unpkg.com/htmx.org@1.6.1"></script>
-<script src="https://unpkg.com/htmx.org@1.6.1/dist/ext/client-side-templates.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/nunjucks/3.0.1/nunjucks.min.js"
-    integrity="sha512-IIuR+Zp8wvP0dxNcSsRPoL7SXzP1kGmosDtcU7f6cPObZ9F5Ze/icFSRH/SqigP468jGwDm2XOE0/gSGm/cTBw=="
-    crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- End of HTMX -->
-{% endblock javascript %}

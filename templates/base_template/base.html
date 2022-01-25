@@ -28,6 +28,14 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon/favicon-16x16.png' %}">
   <!-- End of Favicon -->
+  <!-- HTMX -->
+  <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+  <script src="https://unpkg.com/htmx.org@0.0.8/dist/ext/debug.js"></script>
+  <script src="https://unpkg.com/htmx.org@1.6.1/dist/ext/client-side-templates.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/nunjucks/3.0.1/nunjucks.min.js"
+      integrity="sha512-IIuR+Zp8wvP0dxNcSsRPoL7SXzP1kGmosDtcU7f6cPObZ9F5Ze/icFSRH/SqigP468jGwDm2XOE0/gSGm/cTBw=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- End of HTMX -->
   {% if title %}
   <title>{{ title }}</title>
   {% endif %}

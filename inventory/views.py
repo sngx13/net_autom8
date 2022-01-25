@@ -275,7 +275,9 @@ def device_run_command(request):
         output = cli_command_runner(device_id, command)
         if output['status'] == 'success':
             return JsonResponse(
-                {'items': output['details']},
+                {
+                    'items': output['details']
+                },
                 json_dumps_params={'indent': 4}
             )
         else:
